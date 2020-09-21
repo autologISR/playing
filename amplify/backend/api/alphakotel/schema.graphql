@@ -1,0 +1,226 @@
+enum CompanyType {
+  ImportExport
+  FreightForwarder
+  AutologTeam
+}
+
+enum ImportExport {
+  Import
+  Export
+  ImportExport
+}
+
+type AccountApplicationSubmissions @model {
+  id: ID!
+  companyName: String!
+  companyType: CompanyType!
+  userRole: String!
+  firstName: String!
+  lastName: String!
+  phoneNumber: String!
+  emailAddress: String!
+  additionalInfo: String
+  importerExporterInfo: String
+  freightForwarderInfo: String
+}
+
+enum RateType {
+  FOBImportOCEANLCL
+  FOBImportOCEANFCL
+  FOBImportAIRLCL
+
+  EXWImportOCEANFCL
+  EXWImportOCEANLCL
+  EXWImportAIRLCL
+
+  CIFImportOCEANLCL
+  CIFImportOCEANFCL
+  CIFImportAIRLCL
+
+  DAPImportOCEANLCL
+  DAPImportOCEANFCL
+  DAPImportAIRLCL
+
+  DDPImportOCEANLCL
+  DDPImportOCEANFCL
+  DDPImportAIRLCL
+
+  FOBExportOCEANLCL
+  FOBExportOCEANFCL
+  FOBExportAIRLCL
+
+  EXWExportOCEANFCL
+  EXWExportOCEANLCL
+  EXWExportAIRLCL
+
+  CIFExportOCEANLCL
+  CIFExportOCEANFCL
+  CIFExportAIRLCL
+
+  DAPExportOCEANLCL
+  DAPExportOCEANFCL
+  DAPExportAIRLCL
+
+  DDPExportOCEANLCL
+  DDPExportOCEANFCL
+  DDPExportAIRLCL
+
+  COURIERExport
+  COURIERImport
+}
+
+type RateSubmission @model
+  @key(name: "ByTypeValidity", fields: ["rateType", "validFrom", "validTo"]) {
+  id: ID!
+  rateName: String!
+  freightForwarderName: String!
+  carrierName: String!
+  rateType: RateType!
+  validFrom: String!
+  validTo: String!
+  originCharges: String
+  freightTransportCharges: String
+  localCharges: String!
+}
+
+type infoClient {
+  officeAddress: String!
+  cargoLoadAddress: String!
+
+  officeNumber: String
+  phoneNumber: String
+  deltaImport: String
+  deltaExport: String
+  localsByTomindu: String
+
+  additionalInfo: String
+}
+
+type infoFFClient {
+  officeAddress: String!
+  officeNumber: String
+
+  additionalInfo: String
+}
+
+type Clients @model {
+  id: ID!
+  companyName: String!
+  impExp: ImportExport!
+  cognitoGroup: String!
+
+  mainUserMail: String!
+  mainUserName: String!
+
+  info: infoClient!
+  addedBy: String!
+
+  openShipments: String
+  closedShipments: String
+}
+
+type FFClients @model {
+  id: ID!
+  companyName: String!
+  cognitoGroup: String!
+
+  mainUserMail: String!
+  mainUserName: String!
+
+  info: infoFFClient!
+
+  openShipments: String
+  closedShipments: String
+}
+
+type CompanyUsersInSystem @model {
+  id: ID!
+  companyType: CompanyUsersTypes!
+
+  mainUserName: String!
+  mainUserMail: String!
+
+  info: String!
+}
+
+enum CompanyUsersTypes {
+  ImportExport
+  FreightForwarder
+}
+
+enum RequestStatus {
+  Pending
+  ApprovedOnGoing
+  ApprovedDone
+  Declined
+}
+###
+###to do - need to update Allrequest by status
+type AllRequests @model {
+  requestID: ID!
+
+  fromRegion: String
+  fromState: String
+  fromPort: String
+
+  terms: String!
+  airOcean: String!
+
+  madeByUserMail: String!
+  createdAt: String!
+
+  status: RequestStatus
+  details: String!
+
+  Test: String
+
+  offersCount: String
+  offers: String
+}
+
+# PendingRequests-info ->
+#info.originalRFQ
+#info.offerAccepted
+type PendingRequests @model {
+  id: ID!
+  requestid: ID!
+  byUserMail: String!
+
+  operatedBY: String!
+  rateId: ID!
+
+  info: String!
+}
+
+# NEED TO ADD -
+#             LIMITS
+#             MIN WEIGHT
+type IMPORTRatesSimplified @model {
+  rateHash: String!
+  id: ID!
+  rateID: ID!
+  rateName: String!
+  freightForwarderName: String!
+  carrierName: String!
+  validFrom: String!
+  validTo: String!
+  direct: [String]
+
+  zone: String
+  state: String
+  portFrom: String
+  portTo: String!
+  limits: String
+
+  airRate: String
+  lcl: String
+  dv20: String
+  hc20: String
+  dv40: String
+  hq40: String
+  otherContainers: String
+
+  exwCharges: String
+  fobCharges: String
+  localCharges: String
+}

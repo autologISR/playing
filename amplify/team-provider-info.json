@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-alphakotel-dev-160743-authRole",
+      "UnauthRoleArn": "arn:aws:iam::208672149178:role/amplify-alphakotel-dev-160743-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::208672149178:role/amplify-alphakotel-dev-160743-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-alphakotel-dev-160743-deployment",
+      "UnauthRoleName": "amplify-alphakotel-dev-160743-unauthRole",
+      "StackName": "amplify-alphakotel-dev-160743",
+      "StackId": "arn:aws:cloudformation:eu-west-1:208672149178:stack/amplify-alphakotel-dev-160743/724473f0-fc0b-11ea-ba71-026197c942fe",
+      "AmplifyAppId": "d49odix7woxxl"
+    },
+    "categories": {
+      "auth": {
+        "alphakotel8ae4a2ea": {}
+      }
+    }
+  }
+}

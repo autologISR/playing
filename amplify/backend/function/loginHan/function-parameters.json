@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "api": {
+      "alphakotel": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
