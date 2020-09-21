@@ -42,19 +42,20 @@ export const Login: FunctionComponent<authProps> = ({ setCurUser }) => {
   const [cognitoUser, setCognitoUser] = React.useState(undefined);
   const [firstLogin, setFirstLogin] = React.useState(false);
 
+  //Islogged is Positive Only after SuccesLogIn
   if (islogged) {
     if (cognitoUser !== undefined) {
-      // console.log("is logged positive, this is user", cognitoUser);
       goToDashBoard();
     }
   }
 
   async function goToDashBoard() {
     if (cognitoUser !== undefined) {
-      // console.log("goToDashBoard");
       try {
+
         getUserType(userName).then((response) => {
-          console.log("response from get type -> ", response);
+          console.log("response from Lambda -> ", response);
+          
           if (response?.status === 200) {
             switch (response.data) {
               case "Team":

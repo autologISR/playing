@@ -23,7 +23,7 @@ const App = () => {
     <Router>
       <div>
          <Route exact path="/" component={(props: any) => <Home />} />
-         {/* <Route
+          <Route
           path="/dashboard"
           component={(props: any) => (
             <Dashboard
@@ -31,7 +31,7 @@ const App = () => {
               cognitoUser={curUser.cognitoUser}
             />
           )}
-        />   */}
+        />   
         <Route 
           path="/login"
           component={(props: any) => (
