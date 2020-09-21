@@ -42,7 +42,8 @@ export type Editor =
     | 'postalCodeRange'
     | 'length'
     | 'radius'
-    | 'addressSearch';
+    | 'addressSearch'
+    | 'phonemasktextbox';
 
 
 export interface CustomComponentOnCellsChangeProps {

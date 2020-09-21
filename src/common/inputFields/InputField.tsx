@@ -84,6 +84,7 @@ export const InputField: React.FunctionComponent<IFieldProps> = (props: IFieldPr
             {inputType === "postalcoderange" && <PostalCodeRange {...args} />}
 
             {inputType === "radius" && <RadiusInput {...args} />}
+            
             {inputType === "addresssearch" && <AddressSearchInput {...args}/>}
         </Box>
             </MuiThemeProvider>
