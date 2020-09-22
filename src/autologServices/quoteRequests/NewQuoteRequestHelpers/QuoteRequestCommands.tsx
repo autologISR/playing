@@ -8,8 +8,7 @@ import { Switch } from "@material-ui/core";
 import axios from "axios";
 
 const requestLmabdaUrl =
-  // "https://9cv95bz5b9.execute-api.eu-west-1.amazonaws.com/default/quoteRequestHandler-dev";
-  "https://9cv95bz5b9.execute-api.eu-west-1.amazonaws.com/default/hello-dev";
+  "https://12t8bytiwf.execute-api.eu-west-1.amazonaws.com/default/RFQHan-dev";
 
 let date: Date = new Date();
 
@@ -34,6 +33,7 @@ function getInputForRFQEXW(
   userMail: string
 ) {
   let helperShipmentDetails;
+
   if (airOcean === "Ocean") {
     helperShipmentDetails = getShipmentsDetailsOcean(submissionData);
   } else {
@@ -48,23 +48,20 @@ function getInputForRFQEXW(
     supplierDetails: helperSuppliersDetails,
   };
 
-  let idHelper = uuid()
-  let requestidHelper = idHelper + "123"
+  let idHelper = uuid();
+  let requestidHelper = idHelper + "123";
 
   let helper = {
-    id:idHelper,
+    id: idHelper,
     requestID: requestidHelper,
-    offersID: uuid(),
-    fromRegion: region,
     fromState: submissionData.SupplierDetails.supplierState,
-    Test:"No",
+    Test: "No",
 
     terms: "EXW",
     airOcean: airOcean,
 
     madeByUserMail: userMail,
     createdAt: date,
-    status: "Pending",
 
     details: JSON.stringify(detailsToAdd),
   };
@@ -133,7 +130,7 @@ function getInputForRFQFOB(
     fromRegion: region,
     fromState: locationFOBHelper.state,
     fromPort: locationFOBHelper.portFrom,
-    Test:"No",
+    Test: "No",
     terms: "FOB",
     airOcean: airOcean,
 
@@ -156,6 +153,28 @@ function getInputAddAllRequests(rfq: any, offers: any) {
   return { ...rfq, offers: offers };
 }
 
+async function getOffers(requestForQuote: IValues) {
+  let offers = undefined;
+  try {
+    console.log("getOffers ... this is rfq -> ", requestForQuote);
+    offers = await axios
+      .post(requestLmabdaUrl, { requestForQuote })
+      .then((res) => {
+        console.log("response from RFQ HANDLER -> ", res);
+        return res;
+      });
+  } catch (err) {
+    console.log(err);
+  }
+  if (offers !== undefined) {
+    console.log("offers not undefined! -> ", offers);
+    return offers;
+  } else {
+    console.log("offers are undefined!");
+    return "";
+  }
+}
+
 export const QuoteRequestSubmissions = async (submissionData: IValues) => {
   // const [offers, setOffers] = useState({});
   // const [rfq, setRfq] = useState({});
@@ -163,104 +182,133 @@ export const QuoteRequestSubmissions = async (submissionData: IValues) => {
 
   const currentUserInfo = await Auth.currentUserInfo();
   const userMail = currentUserInfo.attributes.email;
-  let requestForQuote: any;
 
   const { incoTerms, airOcean, region } = submissionData.GeneralInfo;
 
-  switch (incoTerms) {
-    case "EXW":
-      requestForQuote = getInputForRFQEXW(
-        submissionData,
-        airOcean,
-        region,
-        userMail
-      );
-      break;
-    case "FOB":
-      requestForQuote = getInputForRFQFOB(
-        submissionData,
-        airOcean,
-        region,
-        userMail
-      );
-
-    default:
-      break;
-  }
-
-  console.log("requestForQuote -> ", requestForQuote);
-
-  // let requestID = await API.graphql(
-  //   graphqlOperation(mutations.createAllRequests, {
-  //     input: inputToAdd,
-  //   })
-  // );
-
-  let x;
-  // console.log("requestID -> ", requestID);
-
-  if (requestForQuote) {
-    // setRfq(requestForQuote);
-
-    try {
-      x = await axios
-        .post(requestLmabdaUrl, { requestForQuote })
-        .then(async (res) => {
-          // console.log("res -> ", res);
-          // console.log("res.data.relevantOffers -> ", res.data.relevantOffers);
-
-          // setOffers(res.data.relevantOffers);
-          // setOfferID(res.data.offersID);
-
-          let offers = res.data.relevantOffers;
-          let inputToAddAllRequests = getInputAddAllRequests(
-            requestForQuote,
-            offers
-          );
-          console.log(
-            "this is inputToAddAllRequests -> ",
-            inputToAddAllRequests
-          );
-
-          let requestAndOffer = await API.graphql(
-            graphqlOperation(mutations.createAllRequests, {
-              input: inputToAddAllRequests,
-            })
-          );
-
-          let requestID = inputToAddAllRequests.requestID;
-          goToOffers(requestID);
-
-          // let path = res.data.toString();
-          // goToOffers(path);
-        });
-    } catch (err) {
-      console.log("erroe -> ", err);
-    }
-  }
-
-  // try {
-  //   offersID = await axios
-  //     .post(requestLmabdaUrl, { inputToAdd })
-  //     .then((res) => {
-  //       console.log("res -> ", res);
-
-  //       console.log("res.data -> ", res.data);
-  //       let path = res.data.toString();
-  //       goToOffers(path);
-  //       console.log("MadeItTOHERE");
-  //     });
-  // } catch (err) {
-  //   console.log("error -> ", err);
-  // }
-  await delay(3000);
-
-  // console.log("offersID -> ", offersID);
+  let offersHelper = await getOffers(submissionData);
+  console.log("done QuoteRequestSubmissions");
   return;
 };
+
+// switch (incoTerms) {
+//   case "EXW":
+//     requestForQuote = getInputForRFQEXW(
+//       submissionData,
+//       airOcean,
+//       region,
+//       userMail
+//     );
+//     break;
+//   case "FOB":
+//     requestForQuote = getInputForRFQFOB(
+//       submissionData,
+//       airOcean,
+//       region,
+//       userMail
+//     );
+//     break;
+
+//   default:
+//     break;
+// }
+
+// if (requestForQuote) {
+//   // setRfq(requestForQuote);
+
+//   try {
+//     x = await axios
+//       .post(requestLmabdaUrl, { requestForQuote })
+//       .then(async (res) => {
+//         // console.log("res -> ", res);
+//         // console.log("res.data.relevantOffers -> ", res.data.relevantOffers);
+
+//         // setOffers(res.data.relevantOffers);
+//         // setOfferID(res.data.offersID);
+
+//         let offers = res.data.relevantOffers;
+//         let inputToAddAllRequests = getInputAddAllRequests(
+//           requestForQuote,
+//           offers
+//         );
+//         console.log(
+//           "this is inputToAddAllRequests -> ",
+//           inputToAddAllRequests
+//         );
+
+//         let requestAndOffer = await API.graphql(
+//           graphqlOperation(mutations.createAllRequests, {
+//             input: inputToAddAllRequests,
+//           })
+//         );
+
+//         let requestID = inputToAddAllRequests.requestID;
+//         goToOffers(requestID);
+
+//         // let path = res.data.toString();
+//         // goToOffers(path);
+//       });
+//   } catch (err) {
+//     console.log("erroe -> ", err);
+//   }
+// }
 
 // function handleclikurl() {
 //   let id = "id1";
 //   const path = "/offers/?id=" + id;
 //   openInNewTab(path);
 // }
+
+// let requestID = await API.graphql(
+//   graphqlOperation(mutations.createAllRequests, {
+//     input: inputToAdd,
+//   })
+// );
+// try {
+//   offersID = await axios
+//     .post(requestLmabdaUrl, { inputToAdd })
+//     .then((res) => {
+//       console.log("res -> ", res);
+
+//       console.log("res.data -> ", res.data);
+//       let path = res.data.toString();
+//       goToOffers(path);
+//       console.log("MadeItTOHERE");
+//     });
+// } catch (err) {
+//   console.log("error -> ", err);
+// }
+
+//   x = await axios
+//       .post(requestLmabdaUrl, { requestForQuote })
+//       .then(async (res) => {
+//         // console.log("res -> ", res);
+//         // console.log("res.data.relevantOffers -> ", res.data.relevantOffers);
+
+//         // setOffers(res.data.relevantOffers);
+//         // setOfferID(res.data.offersID);
+
+//         let offers = res.data.relevantOffers;
+//         let inputToAddAllRequests = getInputAddAllRequests(
+//           requestForQuote,
+//           offers
+//         );
+//         console.log(
+//           "this is inputToAddAllRequests -> ",
+//           inputToAddAllRequests
+//         );
+
+//         let requestAndOffer = await API.graphql(
+//           graphqlOperation(mutations.createAllRequests, {
+//             input: inputToAddAllRequests,
+//           })
+//         );
+
+//         let requestID = inputToAddAllRequests.requestID;
+//         goToOffers(requestID);
+
+//         // let path = res.data.toString();
+//         // goToOffers(path);
+//       });
+//   } catch (err) {
+//     console.log("erroe -> ", err);
+//   }

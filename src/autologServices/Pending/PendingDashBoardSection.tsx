@@ -8,26 +8,27 @@ import {
   StepsCallbackProps,
   StepForm,
 } from "../../common/stepForm/stepFormTypes";
-import { quoteRequsetsOverviewSchema } from "./NewQuoteRequestHelpers/QuotesRequestsProps";
-import { newQuoteRequestSchema } from "./NewQuoteRequest";
 
+import { PendingOverviewSchema } from "./PendingProps";
+
+//companyAccountOverviewSchema
 const domainSchema: DomainSchema = new Map([
   [
-    "Quote requests",
+    "Pending",
     {
-      entityName: "Quote requests",
-      entitySingularName: "Quote request",
-      entityOverview: quoteRequsetsOverviewSchema,
-      // entityDetails: quoteRequsetsDetailsSchema,
-      newEntity: newQuoteRequestSchema,
+      entityName: "Pending",
+      entitySingularName: "Pending",
+      entityOverview: PendingOverviewSchema,
+      // entityDetails: companyAccountDetailsSchema,
+      // newEntity: createCompanyAccountSchema,
     },
   ],
 ]);
 
-export const QuotesRequestsDashboardSection = () => {
+export const PendingRFQDashboardSection = () => {
   return (
     <AutologDashboardSection
-      entityNames={["Quote requests"]}
+      entityNames={["Pending"]}
       domainSchema={domainSchema}
     />
   );
