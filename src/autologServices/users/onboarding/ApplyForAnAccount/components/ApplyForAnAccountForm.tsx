@@ -3,7 +3,7 @@ import { Form } from "../../../../../common/form/Form";
 import * as React from "react";
 import { CreateAccountApplicationSubmissions } from "../applyForAnAccountCommands";
 import { AutologSystemMessageSchema } from "../../../../../common/systemMessages/autologSystemMessageTypes";
-import { companyAccountGeneralInfoForm } from "../../../UsersDashboardSection";
+import { companyAccountGeneralInfoForm } from "../../../ApplyingUsersDashboardSection";
 
 const validate = () => {
   return {};

@@ -1,6 +1,6 @@
 import React from "react";
 import StepFormComponent from "../../../../../common/stepForm/StepForm";
-import {createCompanyAccountSchema} from '../../../UsersDashboardSection';
+import {createCompanyAccountSchema} from '../../../ApplyingUsersDashboardSection';
 
 export default function ApplyForAnAccountStagedForm() {
     return (

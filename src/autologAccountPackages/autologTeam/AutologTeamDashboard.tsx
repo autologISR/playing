@@ -1,14 +1,16 @@
 import React from "react";
 import AutologDashboard from "../../common/dashboard/AutologDashboard";
-import { UsersDashboardSection } from "../../autologServices/users/UsersDashboardSection";
+import { ApplyingUsersDashboardSection } from "../../autologServices/users/ApplyingUsersDashboardSection";
 import { RatesDashboardSection } from "../../autologServices/rates/RatesDashboardSection";
 import { QuotesRequestsDashboardSection } from "../../autologServices/quoteRequests/QuotesRequestsDashboardSection";
+import { SystemUsersDashboardSection } from "../../autologServices/users//SystemUsersAndRegistrations/SystemUsersSection";
 
-const tabValues = ["Rates", "Users", "Quotes"];
+const tabValues = ["Rates", "Applying", "Quotes", "Users"];
 const tableComponents = [
   RatesDashboardSection,
-  UsersDashboardSection,
+  ApplyingUsersDashboardSection,
   QuotesRequestsDashboardSection,
+  SystemUsersDashboardSection,
 ];
 
 export const AutologTeamDashboard: React.FunctionComponent = () => {

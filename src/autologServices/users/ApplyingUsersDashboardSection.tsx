@@ -252,21 +252,21 @@ export const companyAccountDetailsSchema: EntityDetailsSchema<AccountApplication
 
 const domainSchema: DomainSchema = new Map([
   [
-    "Company Accounts",
+    "Applying Companies",
     {
-      entityName: "Company Accounts",
-      entitySingularName: "Company Account",
+      entityName: "Applying Companies",
+      entitySingularName: "Applying Company",
       entityOverview: companyAccountOverviewSchema,
       entityDetails: companyAccountDetailsSchema,
-      newEntity: createCompanyAccountSchema,
+      // newEntity: createCompanyAccountSchema,
     },
   ],
 ]);
 
-export const UsersDashboardSection = () => {
+export const ApplyingUsersDashboardSection = () => {
   return (
     <AutologDashboardSection
-      entityNames={["Company Accounts"]}
+      entityNames={["Applying Companies"]}
       domainSchema={domainSchema}
     />
   );

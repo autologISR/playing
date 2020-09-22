@@ -3,7 +3,7 @@ import * as mutations from "../../../../graphql/mutations";
 import {IValues} from "../../../../common/form/formTypes";
 import awsconfig from '../../../../aws-exports';
 
-Amplify.configure(awsconfig);
+// Amplify.configure(awsconfig);
 
 enum companyTypeChoice {
     ImportExport = 'ImportExport',
