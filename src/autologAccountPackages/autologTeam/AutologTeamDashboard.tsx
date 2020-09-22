@@ -4,8 +4,12 @@ import { UsersDashboardSection } from "../../autologServices/users/UsersDashboar
 import { RatesDashboardSection } from "../../autologServices/rates/RatesDashboardSection";
 import { QuotesRequestsDashboardSection } from "../../autologServices/quoteRequests/QuotesRequestsDashboardSection";
 
-const tabValues = ["Rates", "Users"];
-const tableComponents = [RatesDashboardSection, UsersDashboardSection];
+const tabValues = ["Rates", "Users", "Quotes"];
+const tableComponents = [
+  RatesDashboardSection,
+  UsersDashboardSection,
+  QuotesRequestsDashboardSection,
+];
 
 export const AutologTeamDashboard: React.FunctionComponent = () => {
   return (
