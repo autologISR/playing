@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Amplify, { API, graphqlOperation, Auth } from "aws-amplify";
-import * as mutations from "../../../graphql/mutations";
-import * as queries from "../../../graphql/queries";
 import { uuid } from "uuidv4";
 import { IValues } from "../../../common/form/formTypes";
-import { Switch } from "@material-ui/core";
 import axios from "axios";
+
+// import * as mutations from "../../../graphql/mutations";
+// import * as queries from "../../../graphql/queries";
+// import { Switch } from "@material-ui/core";
 
 const requestLmabdaUrl =
   "https://12t8bytiwf.execute-api.eu-west-1.amazonaws.com/default/RFQHan-dev";
@@ -26,143 +27,27 @@ function getShipmentsDetailsAir(submissionData: IValues) {
   return shipmentDetails;
 }
 
-function getInputForRFQEXW(
-  submissionData: IValues,
-  airOcean: string,
-  region: string,
-  userMail: string
-) {
-  let helperShipmentDetails;
-
-  if (airOcean === "Ocean") {
-    helperShipmentDetails = getShipmentsDetailsOcean(submissionData);
-  } else {
-    helperShipmentDetails = getShipmentsDetailsAir(submissionData);
-  }
-
-  let helperSuppliersDetails = submissionData.SupplierDetails;
-
-  let detailsToAdd = {
-    genralInfo: submissionData.GeneralInfo,
-    shipmentDetails: helperShipmentDetails,
-    supplierDetails: helperSuppliersDetails,
-  };
-
-  let idHelper = uuid();
-  let requestidHelper = idHelper + "123";
-
-  let helper = {
-    id: idHelper,
-    requestID: requestidHelper,
-    fromState: submissionData.SupplierDetails.supplierState,
-    Test: "No",
-
-    terms: "EXW",
-    airOcean: airOcean,
-
-    madeByUserMail: userMail,
-    createdAt: date,
-
-    details: JSON.stringify(detailsToAdd),
-  };
-  return helper;
-}
-
-function getInputForRFQFOB(
-  submissionData: IValues,
-  airOcean: string,
-  region: string,
-  userMail: string
-) {
-  let helperShipmentDetails;
-  if (airOcean === "Ocean") {
-    helperShipmentDetails = getShipmentsDetailsOcean(submissionData);
-  } else {
-    helperShipmentDetails = getShipmentsDetailsAir(submissionData);
-  }
-
-  let locationFOBHelper;
-  switch (region) {
-    case "USA":
-      if (airOcean === "Air") {
-        locationFOBHelper = submissionData.LocationFOBAirUSA;
-      } else {
-        locationFOBHelper = submissionData.LocationFOBOceanUSA;
-      }
-      break;
-
-    case "Europe":
-      if (airOcean === "Air") {
-        locationFOBHelper = submissionData.LocationFOBAirEurope;
-      } else {
-        locationFOBHelper = submissionData.LocationFOBOceanEurope;
-      }
-      break;
-
-    case "FarEast":
-      if (airOcean === "Air") {
-        locationFOBHelper = submissionData.LocationFOBAirFarEast;
-      } else {
-        locationFOBHelper = submissionData.LocationFOBOceanFarEast;
-      }
-      break;
-
-    default:
-      locationFOBHelper = { state: "", portFrom: "" };
-      break;
-  }
-
-  console.log("this is locationFOB -> ", locationFOBHelper);
-
-  let detailsToAdd = {
-    genralInfo: submissionData.GeneralInfo,
-    shipmentDetails: helperShipmentDetails,
-    locationFob: locationFOBHelper,
-  };
-
-  let idHelper = uuid();
-  let requestidHelper = idHelper + "123";
-
-  let helper = {
-    id: idHelper,
-    requestID: requestidHelper,
-    offersID: uuid(),
-    fromRegion: region,
-    fromState: locationFOBHelper.state,
-    fromPort: locationFOBHelper.portFrom,
-    Test: "No",
-    terms: "FOB",
-    airOcean: airOcean,
-
-    madeByUserMail: userMail,
-    createdAt: date,
-    status: "Pending",
-
-    details: JSON.stringify(detailsToAdd),
-  };
-  return helper;
-}
-
 function goToOffers(id: string) {
   const path = "/offers/?id=" + id;
   var win = window.open(path, "_blank");
   if (win != null) win.focus();
 }
 
-function getInputAddAllRequests(rfq: any, offers: any) {
-  return { ...rfq, offers: offers };
-}
-
-async function getOffers(requestForQuote: IValues) {
+async function getOffers(requestForQuote: IValues, userMail: string) {
   let offers = undefined;
+  let idHelper = uuid();
+  let RFQHelper = {
+    ...requestForQuote,
+    requestID: idHelper,
+    userMail: userMail,
+  };
+  console.log("inside getOffers this is RFQHelper -> ", RFQHelper);
+
   try {
-    console.log("getOffers ... this is rfq -> ", requestForQuote);
-    offers = await axios
-      .post(requestLmabdaUrl, { requestForQuote })
-      .then((res) => {
-        console.log("response from RFQ HANDLER -> ", res);
-        return res;
-      });
+    offers = await axios.post(requestLmabdaUrl, { RFQHelper }).then((res) => {
+      console.log("response from RFQ HANDLER -> ", res);
+      return res;
+    });
   } catch (err) {
     console.log(err);
   }
@@ -185,10 +70,52 @@ export const QuoteRequestSubmissions = async (submissionData: IValues) => {
 
   const { incoTerms, airOcean, region } = submissionData.GeneralInfo;
 
-  let offersHelper = await getOffers(submissionData);
+  let offersHelper = await getOffers(submissionData, userMail);
   console.log("done QuoteRequestSubmissions");
   return;
 };
+
+// function getInputForRFQEXW(
+//   submissionData: IValues,
+//   airOcean: string,
+//   region: string,
+//   userMail: string
+// ) {
+//   let helperShipmentDetails;
+
+//   if (airOcean === "Ocean") {
+//     helperShipmentDetails = getShipmentsDetailsOcean(submissionData);
+//   } else {
+//     helperShipmentDetails = getShipmentsDetailsAir(submissionData);
+//   }
+
+//   let helperSuppliersDetails = submissionData.SupplierDetails;
+
+//   let detailsToAdd = {
+//     genralInfo: submissionData.GeneralInfo,
+//     shipmentDetails: helperShipmentDetails,
+//     supplierDetails: helperSuppliersDetails,
+//   };
+
+//   let idHelper = uuid();
+//   let requestidHelper = idHelper + "123";
+
+//   let helper = {
+//     id: idHelper,
+//     requestID: requestidHelper,
+//     fromState: submissionData.SupplierDetails.supplierState,
+//     Test: "No",
+
+//     terms: "EXW",
+//     airOcean: airOcean,
+
+//     madeByUserMail: userMail,
+//     createdAt: date,
+
+//     details: JSON.stringify(detailsToAdd),
+//   };
+//   return helper;
+// }
 
 // switch (incoTerms) {
 //   case "EXW":
@@ -312,3 +239,78 @@ export const QuoteRequestSubmissions = async (submissionData: IValues) => {
 //   } catch (err) {
 //     console.log("erroe -> ", err);
 //   }
+
+// function getInputForRFQFOB(
+//   submissionData: IValues,
+//   airOcean: string,
+//   region: string,
+//   userMail: string
+// ) {
+//   let helperShipmentDetails;
+//   if (airOcean === "Ocean") {
+//     helperShipmentDetails = getShipmentsDetailsOcean(submissionData);
+//   } else {
+//     helperShipmentDetails = getShipmentsDetailsAir(submissionData);
+//   }
+
+//   let locationFOBHelper;
+//   switch (region) {
+//     case "USA":
+//       if (airOcean === "Air") {
+//         locationFOBHelper = submissionData.LocationFOBAirUSA;
+//       } else {
+//         locationFOBHelper = submissionData.LocationFOBOceanUSA;
+//       }
+//       break;
+
+//     case "Europe":
+//       if (airOcean === "Air") {
+//         locationFOBHelper = submissionData.LocationFOBAirEurope;
+//       } else {
+//         locationFOBHelper = submissionData.LocationFOBOceanEurope;
+//       }
+//       break;
+
+//     case "FarEast":
+//       if (airOcean === "Air") {
+//         locationFOBHelper = submissionData.LocationFOBAirFarEast;
+//       } else {
+//         locationFOBHelper = submissionData.LocationFOBOceanFarEast;
+//       }
+//       break;
+
+//     default:
+//       locationFOBHelper = { state: "", portFrom: "" };
+//       break;
+//   }
+
+//   console.log("this is locationFOB -> ", locationFOBHelper);
+
+//   let detailsToAdd = {
+//     genralInfo: submissionData.GeneralInfo,
+//     shipmentDetails: helperShipmentDetails,
+//     locationFob: locationFOBHelper,
+//   };
+
+//   let idHelper = uuid();
+//   let requestidHelper = idHelper + "123";
+
+//   let helper = {
+//     id: idHelper,
+//     requestID: requestidHelper,
+//     offersID: uuid(),
+//     fromRegion: region,
+//     fromState: locationFOBHelper.state,
+//     fromPort: locationFOBHelper.portFrom,
+//     Test: "No",
+//     terms: "FOB",
+//     airOcean: airOcean,
+
+//     madeByUserMail: userMail,
+//     createdAt: date,
+//     status: "Pending",
+
+//     details: JSON.stringify(detailsToAdd),
+//   };
+//   return helper;
+// }
