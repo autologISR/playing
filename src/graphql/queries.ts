@@ -402,3 +402,101 @@ export const listImportRatesSimplifieds = /* GraphQL */ `
     }
   }
 `;
+export const simplifiedByPortFob = /* GraphQL */ `
+  query SimplifiedByPortFob(
+    $rateHash: String
+    $portFrom: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelIMPORTRatesSimplifiedFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    SimplifiedByPortFOB(
+      rateHash: $rateHash
+      portFrom: $portFrom
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        rateHash
+        id
+        rateID
+        rateName
+        freightForwarderName
+        carrierName
+        validFrom
+        validTo
+        direct
+        zone
+        state
+        portFrom
+        portTo
+        limits
+        airRate
+        lcl
+        dv20
+        hc20
+        dv40
+        hq40
+        otherContainers
+        exwCharges
+        fobCharges
+        localCharges
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const simplifiedByStateExw = /* GraphQL */ `
+  query SimplifiedByStateExw(
+    $rateHash: String
+    $state: ModelStringKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelIMPORTRatesSimplifiedFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    SimplifiedByStateEXW(
+      rateHash: $rateHash
+      state: $state
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        rateHash
+        id
+        rateID
+        rateName
+        freightForwarderName
+        carrierName
+        validFrom
+        validTo
+        direct
+        zone
+        state
+        portFrom
+        portTo
+        limits
+        airRate
+        lcl
+        dv20
+        hc20
+        dv40
+        hq40
+        otherContainers
+        exwCharges
+        fobCharges
+        localCharges
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;

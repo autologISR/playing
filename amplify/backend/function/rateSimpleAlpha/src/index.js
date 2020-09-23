@@ -1,360 +1,292 @@
-/*
-This function recives a RFQ, proccess it (relevant rates + rating them)
-=> sends back the id at offerstable (not offersID)
-*/
 var AWS = require("aws-sdk");
 AWS.config.update({ region: "eu-west-1" });
 const docClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
-  let params;
-  let hash;
+  if (event.Records[0].eventName === "INSERT") {
+    console.log(event.Records[0].dynamodb.NewImage);
 
-  if (
-    JSON.parse(event.body).requestForQuote.Test ===
-    "fakeRequest_OCEAN_FCL_FAREAST_FOB"
-  ) {
-    console.log("entered Test");
+    let rate = event.Records[0].dynamodb.NewImage;
+    let extraID = event.Records[0].eventID;
+    let sharedInfo = getSharedInfo(rate, extraID);
+    // sharedInfo = {rateHash,id rateID,rateName,freightForwarderName,carrierName,validFrom,validTo  }
+    //rateHah === rateType
 
-    params = InitialFake_FCL_OCEAN_FAREAST_FOB(
-      JSON.parse(event.body).requestForQuote
-    );
-    hash = "FOBImportOCEANFCL";
-    // terms + "Import" + "OCEAN" + containerTyp =
-    console.log("params -> ", params);
-  } else {
-    console.log("entered Not Test");
-    console.log("event -> ", event);
+    let FOBImportAIRLCL_proccessing;
+    let numOfIterations;
+    let index = 0;
 
-    console.log("JSON.parse(event.body) -> ", JSON.parse(event.body));
+    switch (sharedInfo.rateHash) {
+      case "FOBImportAIRLCL":
+        console.log("Inside switch.. entered FOBImportAIRLCL");
 
-    //fetching request
-    let request = JSON.parse(event.body).requestForQuote;
-    // console.log("request -> ", request);
+        console.log(
+          "entering FOBImportAIRLCL_proccessing...",
+          "rate -> ",
+          rate
+        );
+        FOBImportAIRLCL_proccessing = GET_FOBImportAIRLCL_Details(
+          rate,
+          sharedInfo
+        );
+        // FOBImportAIRLCL_proccessing is of shape {airTableFix, sharedInfoFix, localChargesFix, fobRules}
 
-    //initializing parmas from request
-    params = initial(request);
-    console.log("params -> ", params);
+        numOfIterations = FOBImportAIRLCL_proccessing.airTableFix.length;
+        // console.log("airTableFix -> ", FOBImportAIRLCL_proccessing.airTableFix)
+        // console.log("sharedInfoFix -> ", FOBImportAIRLCL_proccessing.sharedInfoFix)
+        // console.log("localChargesFix -> ", FOBImportAIRLCL_proccessing.localChargesFix)
 
-    console.log("event.body => ", event.body);
-    console.log(JSON.parse(event.body));
+        //numOfIterations - number of ports in this rate
+        console.log("numOfIterations -> ", numOfIterations);
 
-    //constructing hash for relevant rates
-    hash = getHashImport(
-      params.fromRegion,
-      params.fromState,
-      params.terms,
-      params.airOcean,
-      params.containerType
-    );
+        for (index = 0; index < numOfIterations; index++) {
+          let curRow = getRowToUpdate_FOB_AIRLCL(
+            FOBImportAIRLCL_proccessing.airTableFix[index],
+            FOBImportAIRLCL_proccessing.sharedInfoFix,
+            index,
+            FOBImportAIRLCL_proccessing.localChargesFix,
+            FOBImportAIRLCL_proccessing.fobRules
+          );
+          console.log("HANDLER -> curRow To Append -> ", curRow);
+
+          await putItemInSimplifiedTabel_AIRLCL(curRow)
+            .then((res) => {
+              console.log(
+                "all fine.. respons from putItemInSimplifiedTabel_AIRLCL ->",
+                res
+              );
+            })
+            .catch((err) => {
+              console.log("error -> ", err);
+            });
+        }
+        break;
+
+      default:
+        break;
+    }
   }
-
-  let response = {
-    statusCode: 0,
-    body: "",
-  };
-
-  //building query params
-  //       EWX -> Using State
-  //       FOB -> Using Port
-  let paramsForQuery = getParamsForQueryRelevanyRates(
-    hash,
-    params.fromState,
-    params.fromPort
-  );
-  console.log("paramsForQuery -> ", paramsForQuery);
-
-  await docClient
-    .query(paramsForQuery, function(err, data) {
-      if (err) {
-        response = {
-          statusCode: 400,
-          body: "",
-        };
-        console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
-      }
-    })
-    .promise()
-    .then((res) => {
-      console.log("Query succeeded");
-
-      if (res.Count > 0) {
-        console.log("there are " + res.Count + " valid rates found");
-        // console.log(res.Items)
-
-        let offers = makeOffersForAppendTable(res.Items, params);
-        console.log("offers -> ", offers);
-        response = {
-          statusCode: 200,
-          body: JSON.stringify(offers),
-        };
-      } else {
-        response = {
-          statusCode: 400,
-          body: "",
-        };
-        console.log("no valid rates found");
-      }
-    });
-
-  console.log("done");
-  return response;
+  return Promise.resolve("Successfully processed DynamoDB record");
 };
 
-function updateOffers(offers) {
-  let offesHelper = {
-    id: offers.offersID + "123",
-    offersID: offers.offersID,
-    requestID: offers.requestID,
-    madeByUserMail: offers.madeByUserMail,
-    relevantOffers: offers.relevantOffers,
-  };
-  let params = {
-    TableName: "offers-3pjs4yu4wbfp7csh4v4j6x3yla-dev",
-    Item: offesHelper,
-  };
-  docClient
-    .put(params)
-    .promise()
-    .catch((e) => console.log("error ", e));
-}
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
-function getHashImport(fromRegion, fromState, terms, airOcean, containerType) {
-  let hash;
-
-  if (airOcean === "Air") hash = terms + "Import" + "AIR" + "LCL";
-  else hash = terms + "Import" + "OCEAN" + containerType;
-
-  return hash;
-}
-
-function InitialFake_FCL_OCEAN_FAREAST_FOB(rfq) {
-  console.log(rfq);
-  let initialPropsFOB = {
-    requestID: rfq.requestID,
-    offersID: rfq.offersID,
-    fromRegion: rfq.fromRegion,
-    fromState: rfq.fromState,
-    fromPort: rfq.fromPort,
-    terms: "FOB",
-    airOcean: rfq.airOcean,
-    madeByUserMail: rfq.madeByUserMail,
-    containerType: "FCL",
-    details: rfq.detailsHelper,
-    shipmentDetails: rfq.shipmentDetailsHelper,
-    genralInfo: rfq.generalInfoHelper,
-  };
-  return initialPropsFOB;
-}
-
-function initial(request) {
-  console.log("inside initial.. this is request -> ", request);
-  let terms = request.GeneralInfo.incoTerms;
-  console.log("inside iniitial.. this is terms -> ", terms);
-  switch (terms) {
-    case "EXW":
-      let initialPropsEXW = initialEXW(request);
-      return initialPropsEXW;
-      break;
-
-    case "FOB":
-      let initialPropsFOB = initialFOB(request);
-      return initialPropsFOB;
-      break;
-    default:
-      break;
-  }
-}
-
-function initialFOB(request) {
-  console.log("entered initial FOB");
-  console.log("inse initialFOB -- request -> ", request);
-
-  let airOcean = request.GeneralInfo.airOcean;
-
-  let detailsHelper = JSON.parse(request.details);
-
-  let generalInfoHelper = detailsHelper.genralInfo;
-  let locationFob = detailsHelper.locationFob;
-  let shipmentDetailsHelper = detailsHelper.shipmentDetails;
-
-  let containerTypeHelper = "";
-
-  console.log("generalInfoHelper -> ", generalInfoHelper);
-
-  if (request.airOcean === "Ocean") {
-    containerTypeHelper = generalInfoHelper.shipmentType;
-  }
-  console.log("locationFob -> ", locationFob);
-  console.log("containerTypeHelper -> ", containerTypeHelper);
-
-  let initialPropsFOB = {
-    requestID: request.requestID,
-    offersID: request.offersID,
-    fromRegion: request.fromRegion,
-    fromState: request.fromState,
-    fromPort: locationFob.portFrom,
-    terms: "FOB",
-    airOcean: request.airOcean,
-    madeByUserMail: request.madeByUserMail,
-    containerType: containerTypeHelper,
-    details: detailsHelper,
-    shipmentDetails: shipmentDetailsHelper,
-    genralInfo: generalInfoHelper,
-  };
-  return initialPropsFOB;
-}
-function initialFob_AIR() {}
-
-function initialEXW(request) {
-  let detailsHelper = JSON.parse(request.details);
-  let generalInfoHelper = detailsHelper.genralInfo;
-  let supplierDetails = detailsHelper.supplierDetails;
-  let shipmentDetailsHelper = detailsHelper.shipmentDetails;
-
-  let containerTypeHelper = "";
-
-  // console.log("request -> ", request);
-  // console.log("detailsHelper -> ", detailsHelper);
-  // console.log("generalInfoHelper -> ", generalInfoHelper);
-
-  console.log("generalInfoHelper -> ", generalInfoHelper);
-  if (request.airOcean === "Ocean") {
-    containerTypeHelper = generalInfoHelper.shipmentType;
-  }
-
-  let initialPropsEXW = {
-    requestID: request.requestID,
-    offersID: request.offersID,
-    fromRegion: request.fromRegion,
-    fromState: request.fromState,
-    fromPort: "",
-    terms: "EXW",
-    airOcean: request.airOcean,
-    madeByUserMail: request.madeByUserMail,
-    containerType: containerTypeHelper,
-    details: detailsHelper,
-    shipmentDetails: shipmentDetailsHelper,
-    genralInfo: generalInfoHelper,
-  };
-  // console.log("initialPropsEXW -> ", initialPropsEXW);
-  return initialPropsEXW;
-}
-
-function getParamsForQueryRelevanyRates(hash, state, port) {
-  let table = "IMPORTRatesSimplified-3pjs4yu4wbfp7csh4v4j6x3yla-dev";
-  let Index_FOB = "rateHash-portFrom-index";
-  let Index_EXW = "rateHash-state-index";
-
-  let myCase;
-  if (
-    hash === "FOBImportOCEANLCL" ||
-    hash === "FOBImportOCEANFCL" ||
-    hash === "FOBImportAIRLCL"
-  ) {
-    myCase = "FOB";
-  }
-
-  if (
-    hash === "EXWImportOCEANFCL" ||
-    hash === "EXWImportOCEANLCL" ||
-    hash === "EXWImportAIRLCL"
-  ) {
-    myCase = "EXW";
-  }
-
-  console.log("myCase -> ", myCase);
-
-  let ans;
-  switch (myCase) {
-    case "FOB":
-      console.log("im inside hash fob-> ", hash);
-      ans = {
-        TableName: table,
-        IndexName: Index_FOB,
-        KeyConditionExpression:
-          "#rateHash = :rateHash and #portFrom = :portFrom",
-        ExpressionAttributeNames: {
-          "#rateHash": "rateHash",
-          "#portFrom": "portFrom",
-        },
-        ExpressionAttributeValues: {
-          ":rateHash": hash,
-          ":portFrom": port,
-        },
-      };
-      return ans;
-      break;
-
-    case "EXW":
-      console.log("im inside hash exw-> ", hash);
-
-      ans = {
-        TableName: table,
-        IndexName: Index_EXW,
-        KeyConditionExpression: "#rateHash = :rateHash and #state = :state",
-        ExpressionAttributeNames: {
-          "#rateHash": "rateHash",
-          "#state": "state",
-        },
-        ExpressionAttributeValues: {
-          ":rateHash": hash,
-          ":state": state,
-        },
-      };
-      return ans;
-      break;
-
-    default:
-      console.log("NOT GOOD -> THIS IS  HASH -> ", hash);
-      break;
-  }
-}
-
-function makeOffersForAppendTable(rates, params) {
-  let MyrelevantOffers = makeActuallOffers(rates, params);
-
-  let offersRow = {
-    offersID: params.offersID,
-    requestID: params.requestID,
-    madeByUserMail: params.madeByUserMail,
-    // relevantOffers: JSON.stringify(MyrelevantOffers),
-    relevantOffers: MyrelevantOffers,
+function putItemInSimplifiedTabel_AIRLCL(curRow) {
+  const params = {
+    TableName: "IMPORTRatesSimplified-73q7nlgeevdp7fm4c6zv7mppee-dev",
+    Item: curRow,
   };
 
-  return offersRow;
+  return docClient.put(params).promise();
 }
 
-function makeActuallOffers(rates, params) {
-  let offers = [];
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
-  rates.map((rate, index) => {
-    //looping threw each relevant rate, getting its total
-    let total = getTotalForRate(rate, params);
+function getSharedInfo(rate, extraID) {
+  // console.log("rate -> ", rate)
+  var sharedInfo = {
+    rateHash: rate.rateType.S,
+    id: extraID,
+    rateID: rate.id.S,
 
-    //creating current Offer
-    let curOffer = {
-      rateID: rate.rateID,
-      operatedBy: rate.freightForwarderName,
-      totalForThisRate: total,
-    };
+    rateName: rate.rateName.S,
+    freightForwarderName: rate.freightForwarderName.S,
+    carrierName: rate.carrierName.S,
 
-    //Appending offers to return
-    offers.push(curOffer);
+    // PointsOfDestination: record.dynamodb.NewImage.pointsOfDestination,
+    validFrom: rate.validFrom.S,
+    validTo: rate.validTo.S,
+  };
+
+  return sharedInfo;
+}
+
+function getRowToUpdate_FOB_AIRLCL(
+  row,
+  sharedInfo,
+  idHelperIndex,
+  localCharges,
+  fobRules
+) {
+  let portFrom = "";
+  let portTo = "";
+  let tt = 0;
+  let route = "";
+  let minWeight = 0;
+
+  let weightsArray = [];
+  let actualRates = [];
+  row.forEach((element) => {
+    let curField = element.field;
+    switch (curField) {
+      case "portFrom":
+        portFrom = element.value;
+        break;
+
+      case "portTo":
+        portTo = element.value;
+        break;
+
+      case "transitTime":
+        if (element.value && element.value.length && element.value > 0) {
+          tt = element.value;
+        }
+        break;
+
+      case "route":
+        if (element.value && element.value.length > 0) {
+          route = element.value;
+        }
+        break;
+
+      case "minimumWeight":
+        if (element.value && element.value > 0) {
+          minWeight = element.value;
+        }
+        break;
+
+      default:
+        if (curField != "rowIndex") {
+          let helper = element.field.replace("from", "");
+          weightsArray.push(helper);
+          actualRates.push(element.value);
+          break;
+        }
+    } // end of switch
   });
 
-  return offers;
-}
+  // airRateHelper = [weightsArray,actualRates]
+  let airRateHelper = new Array(2);
+  airRateHelper[0] = weightsArray;
+  airRateHelper[1] = actualRates;
 
-function getTotalForRate(rate, params) {
-  let total = {
-    exw: getRandomInt(100),
-    fob: getRandomInt(200),
-    local: 100,
+  let idHelper = sharedInfo.id.concat(idHelperIndex);
+
+  let rowToUpdate = {
+    rateHash: sharedInfo.rateHash,
+    id: idHelper,
+    rateID: sharedInfo.rateID,
+
+    airRate: JSON.stringify(airRateHelper),
+
+    rateName: sharedInfo.rateName,
+    freightForwarderName: sharedInfo.freightForwarderName,
+    carrierName: sharedInfo.carrierName,
+
+    validFrom: sharedInfo.validFrom,
+    validTo: sharedInfo.validTo,
+
+    portFrom: portFrom,
+    portTo: portTo,
+    fobCharges: JSON.stringify(fobRules),
+    localCharges: JSON.stringify(localCharges),
   };
-  return total;
+
+  // console.log(rowToUpdate)
+  return rowToUpdate;
 }
 
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
+//////////////////////////////////////////////////////
+////////////////HELPERS///////////////////////////////
+//////////////////////////////////////////////////////
+
+function GET_FOBImportAIRLCL_Details(rate, sharedInfo) {
+  let freightTransportCharges = JSON.parse(rate.freightTransportCharges.S);
+  console.log(
+    "FUNCTION GET_FOBImportAIRLCL_Details !! freightTransportCharges --> ",
+    freightTransportCharges
+  );
+
+  let freightPart = JSON.parse(rate.freightTransportCharges.S);
+
+  console.log("rate -> ", rate);
+  let localChargesPart = JSON.parse(rate.localCharges.S).additionalCharges;
+
+  let airTable = JSON.parse(rate.freightTransportCharges.S).airTable;
+  let helperxxx = new Array(airTable);
+  let realAirTable = JSON.parse(helperxxx[0]);
+
+  let airTableRules = JSON.parse(rate.freightTransportCharges.S).rules;
+  let helperyyy = new Array(airTableRules);
+  let realAirTableRules = JSON.parse(helperyyy[0]);
+
+  let indexRules = 0;
+  let ansRules = [];
+  for (
+    indexRules = 0;
+    indexRules < realAirTableRules.grid.length;
+    indexRules++
+  ) {
+    ansRules.push(realAirTableRules.grid[indexRules]);
+  }
+
+  console.log(
+    "FUNCTION GET_FOBImportAIRLCL_Details !!ansRules   -> ",
+    ansRules
+  );
+
+  //fixed Air Tabel
+  let airTableFixedHelper = fixAirTable(realAirTable);
+  // console.log("airTableFixed -> ", airTableFixed)
+
+  let returnToHandler = {
+    airTableFix: airTableFixedHelper,
+    sharedInfoFix: sharedInfo,
+    localChargesFix: localChargesPart,
+    fobRules: ansRules,
+  };
+  return returnToHandler;
+}
+
+//helper method, slices the first rows of airTable, until the first empty row
+function fixAirTable(airTable) {
+  let firstEmptyRow = findFirstEmptyRowInAirTable(airTable);
+  let sliced = sliceAirTable(airTable, firstEmptyRow - 1);
+
+  // console.log("this is sliced -> ", sliced)
+  return sliced;
+}
+
+//helper method, findS First Empty Row In Air Table
+function findFirstEmptyRowInAirTable(airTable) {
+  // console.log("inside findFirstEmptyRowInAirTable, this is table recived ", AirTable)
+  let i = 1;
+  let firstRow = 10000;
+  console.log(
+    "findFirstEmptyRowInAirTable -> this is airTable -> ",
+    airTable.grid
+  );
+  for (i = 1; i < airTable.grid.length; i++) {
+    let curRow = airTable.grid[i];
+    // console.log("curRow -> ", curRow)
+
+    curRow.forEach((element) => {
+      if (element.field === "portFrom" && element.value === "") {
+        if (i < firstRow) {
+          firstRow = i;
+          return;
+        }
+      }
+    });
+  }
+
+  console.log(
+    "findFirstEmptyRowInAirTable -> first empty row in airTable-> ",
+    firstRow
+  );
+  return firstRow;
+}
+
+//slices the airTable
+//return ARRAY of first rows until first empty row
+function sliceAirTable(airTable, lastRow) {
+  let ans = [];
+  let index = 1;
+  while (index <= lastRow) {
+    ans.push(airTable.grid[index]);
+    index++;
+  }
+  return ans;
 }

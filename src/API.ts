@@ -678,6 +678,22 @@ export type ModelIMPORTRatesSimplifiedFilterInput = {
   not?: ModelIMPORTRatesSimplifiedFilterInput | null,
 };
 
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+
 export type CreateAccountApplicationSubmissionsMutationVariables = {
   input: CreateAccountApplicationSubmissionsInput,
   condition?: ModelAccountApplicationSubmissionsConditionInput | null,
@@ -1706,6 +1722,96 @@ export type ListImportRatesSimplifiedsQueryVariables = {
 
 export type ListImportRatesSimplifiedsQuery = {
   listIMPORTRatesSimplifieds:  {
+    __typename: "ModelIMPORTRatesSimplifiedConnection",
+    items:  Array< {
+      __typename: "IMPORTRatesSimplified",
+      rateHash: string,
+      id: string,
+      rateID: string,
+      rateName: string,
+      freightForwarderName: string,
+      carrierName: string,
+      validFrom: string,
+      validTo: string,
+      direct: Array< string | null > | null,
+      zone: string | null,
+      state: string | null,
+      portFrom: string | null,
+      portTo: string,
+      limits: string | null,
+      airRate: string | null,
+      lcl: string | null,
+      dv20: string | null,
+      hc20: string | null,
+      dv40: string | null,
+      hq40: string | null,
+      otherContainers: string | null,
+      exwCharges: string | null,
+      fobCharges: string | null,
+      localCharges: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type SimplifiedByPortFobQueryVariables = {
+  rateHash?: string | null,
+  portFrom?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelIMPORTRatesSimplifiedFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type SimplifiedByPortFobQuery = {
+  SimplifiedByPortFOB:  {
+    __typename: "ModelIMPORTRatesSimplifiedConnection",
+    items:  Array< {
+      __typename: "IMPORTRatesSimplified",
+      rateHash: string,
+      id: string,
+      rateID: string,
+      rateName: string,
+      freightForwarderName: string,
+      carrierName: string,
+      validFrom: string,
+      validTo: string,
+      direct: Array< string | null > | null,
+      zone: string | null,
+      state: string | null,
+      portFrom: string | null,
+      portTo: string,
+      limits: string | null,
+      airRate: string | null,
+      lcl: string | null,
+      dv20: string | null,
+      hc20: string | null,
+      dv40: string | null,
+      hq40: string | null,
+      otherContainers: string | null,
+      exwCharges: string | null,
+      fobCharges: string | null,
+      localCharges: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type SimplifiedByStateExwQueryVariables = {
+  rateHash?: string | null,
+  state?: ModelStringKeyConditionInput | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelIMPORTRatesSimplifiedFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type SimplifiedByStateExwQuery = {
+  SimplifiedByStateEXW:  {
     __typename: "ModelIMPORTRatesSimplifiedConnection",
     items:  Array< {
       __typename: "IMPORTRatesSimplified",

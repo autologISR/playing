@@ -69,7 +69,8 @@ enum RateType {
   COURIERImport
 }
 
-type RateSubmission @model
+type RateSubmission
+  @model
   @key(name: "ByTypeValidity", fields: ["rateType", "validFrom", "validTo"]) {
   id: ID!
   rateName: String!
@@ -195,7 +196,18 @@ type PendingRequests @model {
 # NEED TO ADD -
 #             LIMITS
 #             MIN WEIGHT
-type IMPORTRatesSimplified @model {
+type IMPORTRatesSimplified
+  @model
+  @key(
+    name: "SimplifiedByPortFOB"
+    fields: ["rateHash", "portFrom"]
+    queryField: "SimplifiedByPortFOB"
+  )
+  @key(
+    name: "SimplifiedByStateEXW"
+    fields: ["rateHash", "state"]
+    queryField: "SimplifiedByStateEXW"
+  ) {
   rateHash: String!
   id: ID!
   rateID: ID!
