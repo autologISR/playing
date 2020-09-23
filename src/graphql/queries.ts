@@ -243,7 +243,6 @@ export const getAllRequests = /* GraphQL */ `
   query GetAllRequests($id: ID!) {
     getAllRequests(id: $id) {
       id
-      requestID
       fromRegion
       fromState
       fromPort
@@ -269,7 +268,6 @@ export const listAllRequestss = /* GraphQL */ `
     listAllRequestss(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        requestID
         fromRegion
         fromState
         fromPort

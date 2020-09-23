@@ -345,7 +345,6 @@ export const createAllRequests = /* GraphQL */ `
   ) {
     createAllRequests(input: $input, condition: $condition) {
       id
-      requestID
       fromRegion
       fromState
       fromPort
@@ -369,7 +368,6 @@ export const updateAllRequests = /* GraphQL */ `
   ) {
     updateAllRequests(input: $input, condition: $condition) {
       id
-      requestID
       fromRegion
       fromState
       fromPort
@@ -393,7 +391,6 @@ export const deleteAllRequests = /* GraphQL */ `
   ) {
     deleteAllRequests(input: $input, condition: $condition) {
       id
-      requestID
       fromRegion
       fromState
       fromPort

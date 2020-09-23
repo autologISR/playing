@@ -297,7 +297,6 @@ export const onCreateAllRequests = /* GraphQL */ `
   subscription OnCreateAllRequests {
     onCreateAllRequests {
       id
-      requestID
       fromRegion
       fromState
       fromPort
@@ -318,7 +317,6 @@ export const onUpdateAllRequests = /* GraphQL */ `
   subscription OnUpdateAllRequests {
     onUpdateAllRequests {
       id
-      requestID
       fromRegion
       fromState
       fromPort
@@ -339,7 +337,6 @@ export const onDeleteAllRequests = /* GraphQL */ `
   subscription OnDeleteAllRequests {
     onDeleteAllRequests {
       id
-      requestID
       fromRegion
       fromState
       fromPort

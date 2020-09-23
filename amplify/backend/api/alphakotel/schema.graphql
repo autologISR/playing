@@ -158,8 +158,6 @@ enum RequestStatus {
 ###
 ###to do - need to update Allrequest by status
 type AllRequests @model {
-  requestID: ID!
-
   fromRegion: String
   fromState: String
   fromPort: String

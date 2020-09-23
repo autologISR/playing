@@ -342,7 +342,6 @@ export type DeleteCompanyUsersInSystemInput = {
 
 export type CreateAllRequestsInput = {
   id?: string | null,
-  requestID: string,
   fromRegion?: string | null,
   fromState?: string | null,
   fromPort?: string | null,
@@ -366,7 +365,6 @@ export enum RequestStatus {
 
 
 export type ModelAllRequestsConditionInput = {
-  requestID?: ModelIDInput | null,
   fromRegion?: ModelStringInput | null,
   fromState?: ModelStringInput | null,
   fromPort?: ModelStringInput | null,
@@ -384,29 +382,12 @@ export type ModelAllRequestsConditionInput = {
   not?: ModelAllRequestsConditionInput | null,
 };
 
-export type ModelIDInput = {
-  ne?: string | null,
-  eq?: string | null,
-  le?: string | null,
-  lt?: string | null,
-  ge?: string | null,
-  gt?: string | null,
-  contains?: string | null,
-  notContains?: string | null,
-  between?: Array< string | null > | null,
-  beginsWith?: string | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-  size?: ModelSizeInput | null,
-};
-
 export type ModelRequestStatusInput = {
   eq?: RequestStatus | null,
   ne?: RequestStatus | null,
 };
 
 export type UpdateAllRequestsInput = {
-  requestID?: string | null,
   fromRegion?: string | null,
   fromState?: string | null,
   fromPort?: string | null,
@@ -443,6 +424,22 @@ export type ModelPendingRequestsConditionInput = {
   and?: Array< ModelPendingRequestsConditionInput | null > | null,
   or?: Array< ModelPendingRequestsConditionInput | null > | null,
   not?: ModelPendingRequestsConditionInput | null,
+};
+
+export type ModelIDInput = {
+  ne?: string | null,
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  contains?: string | null,
+  notContains?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+  size?: ModelSizeInput | null,
 };
 
 export type UpdatePendingRequestsInput = {
@@ -618,7 +615,6 @@ export type ModelCompanyUsersInSystemFilterInput = {
 };
 
 export type ModelAllRequestsFilterInput = {
-  requestID?: ModelIDInput | null,
   fromRegion?: ModelStringInput | null,
   fromState?: ModelStringInput | null,
   fromPort?: ModelStringInput | null,
@@ -1075,7 +1071,6 @@ export type CreateAllRequestsMutation = {
   createAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -1101,7 +1096,6 @@ export type UpdateAllRequestsMutation = {
   updateAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -1127,7 +1121,6 @@ export type DeleteAllRequestsMutation = {
   deleteAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -1588,7 +1581,6 @@ export type GetAllRequestsQuery = {
   getAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -1617,7 +1609,6 @@ export type ListAllRequestssQuery = {
     items:  Array< {
       __typename: "AllRequests",
       id: string,
-      requestID: string,
       fromRegion: string | null,
       fromState: string | null,
       fromPort: string | null,
@@ -2147,7 +2138,6 @@ export type OnCreateAllRequestsSubscription = {
   onCreateAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -2168,7 +2158,6 @@ export type OnUpdateAllRequestsSubscription = {
   onUpdateAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,
@@ -2189,7 +2178,6 @@ export type OnDeleteAllRequestsSubscription = {
   onDeleteAllRequests:  {
     __typename: "AllRequests",
     id: string,
-    requestID: string,
     fromRegion: string | null,
     fromState: string | null,
     fromPort: string | null,

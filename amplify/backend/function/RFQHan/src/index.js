@@ -8,6 +8,7 @@ const docClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
   let params;
+
   let hash;
 
   if (
@@ -29,14 +30,14 @@ exports.handler = async (event) => {
 
     //fetching request
     let request = JSON.parse(event.body).RFQHelper;
-    console.log("request -> ", request);
+    // console.log("request -> ", request);
 
     //initializing parmas from request
     params = initial(request);
-    console.log("params -> ", params);
+    // console.log("params -> ", params);
 
-    console.log("event.body => ", event.body);
-    console.log(JSON.parse(event.body));
+    // console.log("event.body => ", event.body);
+    // console.log(JSON.parse(event.body));
 
     //constructing hash for relevant rates
     hash = getHashImport(
@@ -284,8 +285,8 @@ function initialEXW(request) {
 
 function getParamsForQueryRelevanyRates(hash, state, port) {
   let table = "IMPORTRatesSimplified-73q7nlgeevdp7fm4c6zv7mppee-dev";
-  let Index_FOB = "rateHash-portFrom-index";
-  let Index_EXW = "rateHash-state-index";
+  let Index_FOB = "SimplifiedByPortFOB";
+  let Index_EXW = "SimplifiedByStateEXW";
 
   let myCase;
   if (
@@ -353,13 +354,13 @@ function getParamsForQueryRelevanyRates(hash, state, port) {
 }
 
 function makeOffersForAppendTable(rates, params) {
+  // console.log("inside makeOffersForAppendTable...rates ", rates)
   let MyrelevantOffers = makeActuallOffers(rates, params);
 
   let offersRow = {
     offersID: params.offersID,
     requestID: params.requestID,
     madeByUserMail: params.madeByUserMail,
-    // relevantOffers: JSON.stringify(MyrelevantOffers),
     relevantOffers: MyrelevantOffers,
   };
 
@@ -388,12 +389,241 @@ function makeActuallOffers(rates, params) {
 }
 
 function getTotalForRate(rate, params) {
+  // console.log("getTotalForRate -- rate -> ", rate)
+  // console.log(" params -> ", params)
+
+  let termsHelper = params.terms;
+  let airOcean = params.airOcean;
+
+  // console.log("airOcean -> ", airOcean)
+  // console.log("termsHelper -> ", termsHelper)
+
   let total = {
     exw: getRandomInt(100),
     fob: getRandomInt(200),
     local: 100,
   };
+
+  switch (termsHelper + airOcean) {
+    case "FOBAir":
+      total = FobAir(rate, params);
+      break;
+
+    default:
+      break;
+  }
+
   return total;
+}
+
+// still need to calculate by currency
+function FobAir(rate, params) {
+  console.log("inside FobAir....");
+  // console.log("inside FobAir... rate -> ", rate)
+  // console.log("inside FobAir... params -> ", params)
+
+  // GetUser Autolog's LOCALS + DELTA
+
+  let shipmentDetailsAir = JSON.parse(params.shipmentDetails.shipmentDetailsAir)
+    .grid;
+  // let shipmentDetailsLength = shipmentDetailsAir.length
+  // let rowShipmentDetailsIndex = 0
+
+  // console.log("inside FobAir.... shipmentDetailsAir -> ", shipmentDetailsAir)
+  // console.log("inside FobAir.... shipmentDetailsLength -> ", shipmentDetailsLength)
+
+  //Get different Boxes
+  let boxes = getBoxes(shipmentDetailsAir);
+  // console.log("inside FobAir... boxes are -> ", boxes)
+
+  let fobPart = calculate_FOB_AIR_FREIGHTPART_WithRules(boxes, rate, params);
+  let localPart = calculateLocalAir(boxes, rate, params);
+
+  let total = {
+    exw: 0,
+    fob: fobPart,
+    local: localPart,
+  };
+  console.log("inside FobAir ... returning total  -> ", total);
+  return total;
+}
+
+function calculateLocalAir(boxes, rate, params) {
+  let Localusd = { locals: 0 };
+  let Localeur = { locals: 0 };
+  let Localnis = { locals: 0 };
+
+  let localAir = {
+    usd: Localusd,
+    eur: Localeur,
+    nis: Localnis,
+  };
+
+  return localAir;
+}
+
+//boxes is shape of [Boxes]
+//box = { curBoxWeight_KG,
+//        curBoxesCount,
+//        curBoxDims:{width, height,length}
+//      }
+//
+// Returns ->
+// let fobPart = {
+//          usd:FOBusd,
+//          eur:FOBeur,
+//          nis:FOBnis
+//            }
+//let FOBusd = {fobFreight:freightNetoBoxes, fobRules:0}
+function calculate_FOB_AIR_FREIGHTPART_WithRules(boxes, rate, params) {
+  console.log(
+    "inside calculate_FOB_AIR_FREIGHTPART_WithRules.. rate is -> ",
+    rate
+  );
+  let numOfBoxes = boxes.length;
+
+  let VolumeWeight;
+  let indexBox;
+  let curBox;
+  let WEIGHT_MASTER;
+
+  let freightNetoBoxes = 0;
+  for (indexBox = 0; indexBox < numOfBoxes; indexBox++) {
+    // VolumeWeight = getVolumeWeight()
+    VolumeWeight = 0;
+
+    curBox = boxes[indexBox];
+
+    // console.log("curbox -> ",curBox)
+    let weightHelper = Number(curBox.curBoxWeight_KG.replace(" kg", ""));
+
+    //setting up Weight_master
+    if (weightHelper > VolumeWeight) {
+      WEIGHT_MASTER = weightHelper;
+    } else {
+      WEIGHT_MASTER = VolumeWeight;
+    }
+    // console.log("inside calculate_FOB_AIR_FREIGHTPART_WithRules.. WEIGHT_MASTER -> ",WEIGHT_MASTER )
+
+    let curRating = getRelevantQuoteForWeight(rate, WEIGHT_MASTER);
+    // console.log("this is curRating  -> ", curRating.toString() ," for box ", indexBox.toString())
+
+    let boxCountTimesRating = curRating * WEIGHT_MASTER;
+    freightNetoBoxes += boxCountTimesRating;
+  }
+
+  let FOBusd = { fobFreight: freightNetoBoxes, fobRules: 0 };
+  let FOBeur = {};
+  let FOBnis = {};
+
+  let fobPart = {
+    usd: FOBusd,
+    eur: FOBeur,
+    nis: FOBnis,
+  };
+
+  return fobPart;
+}
+
+//Helper Method
+//returns the relevant air Rate for specific weight for this rate
+//rate.airRate =  [[weightsArray], [ actualRates]]
+function getRelevantQuoteForWeight(rate, WEIGHT_MASTER) {
+  let index = 0;
+  let ans = 0;
+  let index_keeper = 0;
+  let airRateHelper = JSON.parse(rate.airRate);
+
+  let weightsArray = airRateHelper[0];
+  let actualRates = airRateHelper[1];
+
+  console.log("this is airRateHelper ->", airRateHelper);
+  console.log("this is weightsArray -> ", weightsArray);
+
+  for (index = 0; index < weightsArray.length; index++) {
+    // console.log("weightsArray[index] -> ", Number(weightsArray[index]))
+
+    if (WEIGHT_MASTER > Number(weightsArray[index])) {
+      index_keeper = index;
+      ans = Number(actualRates[index]);
+    }
+  }
+  // console.log("returning from getRelevantQuoteForWeight.. index_keeper -> ", index_keeper)
+  // console.log("returning from getRelevantQuoteForWeight.. WEIGHT_MASTER -> ", WEIGHT_MASTER)
+  // console.log("returning from getRelevantQuoteForWeight.. ans -> ", ans)
+  return ans;
+}
+
+//Helper method ->
+// returns the different boxes from the quote
+function getBoxes(shipmentDetailsAir) {
+  let boxes = [];
+  let shipmentDetailsLength = shipmentDetailsAir.length;
+  let rowShipmentDetailsIndex;
+
+  for (
+    rowShipmentDetailsIndex = 1;
+    rowShipmentDetailsIndex < shipmentDetailsLength;
+    rowShipmentDetailsIndex++
+  ) {
+    // console.log("shipmentDetails at index ", rowShipmentDetailsIndex)
+    // console.log("shipmentDetailsAir[index] -> ", shipmentDetailsAir[rowShipmentDetailsIndex] )
+
+    let curRow = shipmentDetailsAir[rowShipmentDetailsIndex];
+    // console.log("curRow -> ", curRow)
+    let curBox = {};
+    let curBoxesCount;
+
+    let curBoxDims = {
+      width: 0,
+      height: 0,
+      length: 0,
+    };
+    let curBoxWeight_KG;
+
+    curRow.forEach((element) => {
+      switch (element.field) {
+        case "unitWeight":
+          curBoxWeight_KG = element.value;
+          break;
+
+        case "numberOfUnits":
+          curBoxesCount = element.value;
+          break;
+
+        case "unitWidth":
+          curBoxDims.width = element.value;
+          break;
+
+        case "unitHeight":
+          curBoxDims.height = element.value;
+          break;
+
+        case "unitLength":
+          curBoxDims.length = element.value;
+          break;
+
+        default:
+          // console.log("element.field .. default-> ", element.field)
+          break;
+      }
+
+      if (curBoxesCount > 0) {
+        curBox = {
+          curBoxWeight_KG: curBoxWeight_KG,
+          curBoxesCount: curBoxesCount,
+          curBoxDims: curBoxDims,
+        };
+        console.log("addid curBoxWeight_KG ->", curBox.curBoxWeight_KG);
+        console.log("addid curBoxesCount ->", curBox.curBoxesCount);
+        console.log("addid curBoxDims ->", curBox.curBoxDims);
+        boxes.push(curBox);
+      }
+      curBoxesCount = 0;
+    });
+  }
+  console.log("inside getBoxes... returning boxes -> ", boxes);
+  return boxes;
 }
 
 function getRandomInt(max) {
