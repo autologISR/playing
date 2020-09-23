@@ -5,6 +5,8 @@ import { Route, BrowserRouter as Router } from "react-router-dom";
 import { Home } from "./autologAccountPackages/autologTeam/pages/Home";
 import { Dashboard } from "./autologAccountPackages/autologTeam/pages/Dashboard";
 import { Login } from "./autologAccountPackages/autologTeam/pages/Login";
+import { Offers } from "./autologAccountPackages/autologTeam/pages/Offers";
+import { ReveiwPendings } from "./autologAccountPackages/autologTeam/pages/Actions/ReviewPendings/ReveiwPendings";
 
 interface user {
   userType: string;
@@ -22,8 +24,8 @@ const App = () => {
   return (
     <Router>
       <div>
-         <Route exact path="/" component={(props: any) => <Home />} />
-          <Route
+        <Route exact path="/" component={(props: any) => <Home />} />
+        <Route
           path="/dashboard"
           component={(props: any) => (
             <Dashboard
@@ -31,17 +33,21 @@ const App = () => {
               cognitoUser={curUser.cognitoUser}
             />
           )}
-        />   
-        <Route 
+        />
+        <Route
           path="/login"
           component={(props: any) => (
             <Login setCurUser={setCurUser} {...props} />
           )}
-        />  
-        {/* <Route
+        />
+        <Route
           path="/offers"
           component={(props: any) => <Offers {...props} />}
-        />  */}
+        />
+        <Route
+          path="/reviewPndingsRFQ"
+          component={(props: any) => <ReveiwPendings {...props} />}
+        />
       </div>
     </Router>
   );
