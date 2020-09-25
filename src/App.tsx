@@ -6,7 +6,7 @@ import { Home } from "./autologAccountPackages/autologTeam/pages/Home";
 import { Dashboard } from "./autologAccountPackages/autologTeam/pages/Dashboard";
 import { Login } from "./autologAccountPackages/autologTeam/pages/Login";
 import { Offers } from "./autologAccountPackages/autologTeam/pages/Offers";
-import { ReveiwPendings } from "./autologAccountPackages/autologTeam/pages/Actions/ReviewPendings/ReveiwPendings";
+import { ReveiwPendings } from "./autologAccountPackages/autologTeam/pages/Actions/ReviewPendings/ReveiwPendingsPage";
 
 interface user {
   userType: string;

@@ -37,7 +37,7 @@ interface Appending {
   requestid: string;
   byUserMail: string;
 
-  operatedBY: string;
+  operatedByFF: string;
   rateId: string;
 
   info: string;
@@ -69,7 +69,7 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
       requestid: requestId,
       byUserMail: originRFQ.madeByUserMail,
 
-      operatedBY: operatedBy,
+      operatedByFF: "operatedBy",
       rateId: rateID,
 
       info: JSON.stringify(infoH),

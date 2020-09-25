@@ -292,7 +292,7 @@ export const getPendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -315,7 +315,7 @@ export const listPendingRequestss = /* GraphQL */ `
         id
         requestid
         byUserMail
-        operatedBY
+        operatedByFF
         rateId
         info
         createdAt
@@ -393,6 +393,165 @@ export const listImportRatesSimplifieds = /* GraphQL */ `
         exwCharges
         fobCharges
         localCharges
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getShipmentsOnGoing = /* GraphQL */ `
+  query GetShipmentsOnGoing($id: ID!) {
+    getShipmentsOnGoing(id: $id) {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const listShipmentsOnGoings = /* GraphQL */ `
+  query ListShipmentsOnGoings(
+    $filter: ModelShipmentsOnGoingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listShipmentsOnGoings(
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        madeByUserMail
+        createdAt
+        operatedByFF
+        offerID
+        status
+        info
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getShipmentsDone = /* GraphQL */ `
+  query GetShipmentsDone($id: ID!) {
+    getShipmentsDone(id: $id) {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listShipmentsDones = /* GraphQL */ `
+  query ListShipmentsDones(
+    $filter: ModelShipmentsDoneFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listShipmentsDones(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        info
+        status
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getDeclinedRfq = /* GraphQL */ `
+  query GetDeclinedRfq($id: ID!) {
+    getDeclinedRFQ(id: $id) {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listDeclinedRfQs = /* GraphQL */ `
+  query ListDeclinedRfQs(
+    $filter: ModelDeclinedRFQFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listDeclinedRFQs(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        requestid
+        info
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const getAccepedOffers = /* GraphQL */ `
+  query GetAccepedOffers($id: ID!) {
+    getAccepedOffers(id: $id) {
+      id
+      requestid
+      offerId
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const listAccepedOfferss = /* GraphQL */ `
+  query ListAccepedOfferss(
+    $filter: ModelAccepedOffersFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listAccepedOfferss(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        requestid
+        offerId
+        info
+        status
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const byRequestId = /* GraphQL */ `
+  query ByRequestId(
+    $requestid: ID
+    $sortDirection: ModelSortDirection
+    $filter: ModelPendingRequestsFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    byRequestID(
+      requestid: $requestid
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        requestid
+        byUserMail
+        operatedByFF
+        rateId
+        info
         createdAt
         updatedAt
       }
@@ -492,6 +651,35 @@ export const simplifiedByStateExw = /* GraphQL */ `
         fobCharges
         localCharges
         createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const byUserMail = /* GraphQL */ `
+  query ByUserMail(
+    $madeByUserMail: String
+    $sortDirection: ModelSortDirection
+    $filter: ModelShipmentsOnGoingFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    byUserMail(
+      madeByUserMail: $madeByUserMail
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        madeByUserMail
+        createdAt
+        operatedByFF
+        offerID
+        status
+        info
         updatedAt
       }
       nextToken

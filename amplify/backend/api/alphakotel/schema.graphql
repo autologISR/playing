@@ -180,12 +180,14 @@ type AllRequests @model {
 # PendingRequests-info ->
 #info.originalRFQ
 #info.offerAccepted
-type PendingRequests @model {
+type PendingRequests
+  @model
+  @key(name: "byRequestID", fields: ["requestid"], queryField: "byRequestID") {
   id: ID!
   requestid: ID!
   byUserMail: String!
 
-  operatedBY: String!
+  operatedByFF: String!
   rateId: ID!
 
   info: String!
@@ -234,3 +236,38 @@ type IMPORTRatesSimplified
   fobCharges: String
   localCharges: String
 }
+
+type ShipmentsOnGoing
+  @model
+  @key(
+    name: "byUserMail"
+    fields: ["madeByUserMail"]
+    queryField: "byUserMail"
+  ) {
+  madeByUserMail: String!
+  createdAt: String!
+  operatedByFF: String!
+  offerID: String!
+  status: String!
+  info: String
+}
+
+#id is the same as ShipmentsOnGoing_id
+type ShipmentsDone @model {
+  info: String
+  status: String
+}
+
+type DeclinedRFQ @model {
+  requestid: String
+  info: String
+}
+
+#info ={RFQ, OFFER}
+type AccepedOffers @model {
+  requestid: String!
+  offerId: String!
+  info: String!
+  status: String
+}
+

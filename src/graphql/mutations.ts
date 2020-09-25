@@ -416,7 +416,7 @@ export const createPendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -433,7 +433,7 @@ export const updatePendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -450,7 +450,7 @@ export const deletePendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -558,6 +558,189 @@ export const deleteImportRatesSimplified = /* GraphQL */ `
       exwCharges
       fobCharges
       localCharges
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createShipmentsOnGoing = /* GraphQL */ `
+  mutation CreateShipmentsOnGoing(
+    $input: CreateShipmentsOnGoingInput!
+    $condition: ModelShipmentsOnGoingConditionInput
+  ) {
+    createShipmentsOnGoing(input: $input, condition: $condition) {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const updateShipmentsOnGoing = /* GraphQL */ `
+  mutation UpdateShipmentsOnGoing(
+    $input: UpdateShipmentsOnGoingInput!
+    $condition: ModelShipmentsOnGoingConditionInput
+  ) {
+    updateShipmentsOnGoing(input: $input, condition: $condition) {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const deleteShipmentsOnGoing = /* GraphQL */ `
+  mutation DeleteShipmentsOnGoing(
+    $input: DeleteShipmentsOnGoingInput!
+    $condition: ModelShipmentsOnGoingConditionInput
+  ) {
+    deleteShipmentsOnGoing(input: $input, condition: $condition) {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const createShipmentsDone = /* GraphQL */ `
+  mutation CreateShipmentsDone(
+    $input: CreateShipmentsDoneInput!
+    $condition: ModelShipmentsDoneConditionInput
+  ) {
+    createShipmentsDone(input: $input, condition: $condition) {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateShipmentsDone = /* GraphQL */ `
+  mutation UpdateShipmentsDone(
+    $input: UpdateShipmentsDoneInput!
+    $condition: ModelShipmentsDoneConditionInput
+  ) {
+    updateShipmentsDone(input: $input, condition: $condition) {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteShipmentsDone = /* GraphQL */ `
+  mutation DeleteShipmentsDone(
+    $input: DeleteShipmentsDoneInput!
+    $condition: ModelShipmentsDoneConditionInput
+  ) {
+    deleteShipmentsDone(input: $input, condition: $condition) {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createDeclinedRfq = /* GraphQL */ `
+  mutation CreateDeclinedRfq(
+    $input: CreateDeclinedRFQInput!
+    $condition: ModelDeclinedRFQConditionInput
+  ) {
+    createDeclinedRFQ(input: $input, condition: $condition) {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateDeclinedRfq = /* GraphQL */ `
+  mutation UpdateDeclinedRfq(
+    $input: UpdateDeclinedRFQInput!
+    $condition: ModelDeclinedRFQConditionInput
+  ) {
+    updateDeclinedRFQ(input: $input, condition: $condition) {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteDeclinedRfq = /* GraphQL */ `
+  mutation DeleteDeclinedRfq(
+    $input: DeleteDeclinedRFQInput!
+    $condition: ModelDeclinedRFQConditionInput
+  ) {
+    deleteDeclinedRFQ(input: $input, condition: $condition) {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const createAccepedOffers = /* GraphQL */ `
+  mutation CreateAccepedOffers(
+    $input: CreateAccepedOffersInput!
+    $condition: ModelAccepedOffersConditionInput
+  ) {
+    createAccepedOffers(input: $input, condition: $condition) {
+      id
+      requestid
+      offerId
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const updateAccepedOffers = /* GraphQL */ `
+  mutation UpdateAccepedOffers(
+    $input: UpdateAccepedOffersInput!
+    $condition: ModelAccepedOffersConditionInput
+  ) {
+    updateAccepedOffers(input: $input, condition: $condition) {
+      id
+      requestid
+      offerId
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const deleteAccepedOffers = /* GraphQL */ `
+  mutation DeleteAccepedOffers(
+    $input: DeleteAccepedOffersInput!
+    $condition: ModelAccepedOffersConditionInput
+  ) {
+    deleteAccepedOffers(input: $input, condition: $condition) {
+      id
+      requestid
+      offerId
+      info
+      status
       createdAt
       updatedAt
     }

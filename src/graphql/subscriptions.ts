@@ -359,7 +359,7 @@ export const onCreatePendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -373,7 +373,7 @@ export const onUpdatePendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -387,7 +387,7 @@ export const onDeletePendingRequests = /* GraphQL */ `
       id
       requestid
       byUserMail
-      operatedBY
+      operatedByFF
       rateId
       info
       createdAt
@@ -486,6 +486,153 @@ export const onDeleteImportRatesSimplified = /* GraphQL */ `
       exwCharges
       fobCharges
       localCharges
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateShipmentsOnGoing = /* GraphQL */ `
+  subscription OnCreateShipmentsOnGoing {
+    onCreateShipmentsOnGoing {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const onUpdateShipmentsOnGoing = /* GraphQL */ `
+  subscription OnUpdateShipmentsOnGoing {
+    onUpdateShipmentsOnGoing {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const onDeleteShipmentsOnGoing = /* GraphQL */ `
+  subscription OnDeleteShipmentsOnGoing {
+    onDeleteShipmentsOnGoing {
+      id
+      madeByUserMail
+      createdAt
+      operatedByFF
+      offerID
+      status
+      info
+      updatedAt
+    }
+  }
+`;
+export const onCreateShipmentsDone = /* GraphQL */ `
+  subscription OnCreateShipmentsDone {
+    onCreateShipmentsDone {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateShipmentsDone = /* GraphQL */ `
+  subscription OnUpdateShipmentsDone {
+    onUpdateShipmentsDone {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteShipmentsDone = /* GraphQL */ `
+  subscription OnDeleteShipmentsDone {
+    onDeleteShipmentsDone {
+      id
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateDeclinedRfq = /* GraphQL */ `
+  subscription OnCreateDeclinedRfq {
+    onCreateDeclinedRFQ {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateDeclinedRfq = /* GraphQL */ `
+  subscription OnUpdateDeclinedRfq {
+    onUpdateDeclinedRFQ {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteDeclinedRfq = /* GraphQL */ `
+  subscription OnDeleteDeclinedRfq {
+    onDeleteDeclinedRFQ {
+      id
+      requestid
+      info
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onCreateAccepedOffers = /* GraphQL */ `
+  subscription OnCreateAccepedOffers {
+    onCreateAccepedOffers {
+      id
+      requestid
+      offerId
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onUpdateAccepedOffers = /* GraphQL */ `
+  subscription OnUpdateAccepedOffers {
+    onUpdateAccepedOffers {
+      id
+      requestid
+      offerId
+      info
+      status
+      createdAt
+      updatedAt
+    }
+  }
+`;
+export const onDeleteAccepedOffers = /* GraphQL */ `
+  subscription OnDeleteAccepedOffers {
+    onDeleteAccepedOffers {
+      id
+      requestid
+      offerId
+      info
+      status
       createdAt
       updatedAt
     }

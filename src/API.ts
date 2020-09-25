@@ -410,7 +410,7 @@ export type CreatePendingRequestsInput = {
   id?: string | null,
   requestid: string,
   byUserMail: string,
-  operatedBY: string,
+  operatedByFF: string,
   rateId: string,
   info: string,
 };
@@ -418,7 +418,7 @@ export type CreatePendingRequestsInput = {
 export type ModelPendingRequestsConditionInput = {
   requestid?: ModelIDInput | null,
   byUserMail?: ModelStringInput | null,
-  operatedBY?: ModelStringInput | null,
+  operatedByFF?: ModelStringInput | null,
   rateId?: ModelIDInput | null,
   info?: ModelStringInput | null,
   and?: Array< ModelPendingRequestsConditionInput | null > | null,
@@ -446,7 +446,7 @@ export type UpdatePendingRequestsInput = {
   id: string,
   requestid?: string | null,
   byUserMail?: string | null,
-  operatedBY?: string | null,
+  operatedByFF?: string | null,
   rateId?: string | null,
   info?: string | null,
 };
@@ -539,6 +539,116 @@ export type UpdateIMPORTRatesSimplifiedInput = {
 };
 
 export type DeleteIMPORTRatesSimplifiedInput = {
+  id?: string | null,
+};
+
+export type CreateShipmentsOnGoingInput = {
+  id?: string | null,
+  madeByUserMail: string,
+  createdAt?: string | null,
+  operatedByFF: string,
+  offerID: string,
+  status: string,
+  info?: string | null,
+};
+
+export type ModelShipmentsOnGoingConditionInput = {
+  madeByUserMail?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  operatedByFF?: ModelStringInput | null,
+  offerID?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  and?: Array< ModelShipmentsOnGoingConditionInput | null > | null,
+  or?: Array< ModelShipmentsOnGoingConditionInput | null > | null,
+  not?: ModelShipmentsOnGoingConditionInput | null,
+};
+
+export type UpdateShipmentsOnGoingInput = {
+  madeByUserMail?: string | null,
+  createdAt?: string | null,
+  operatedByFF?: string | null,
+  offerID?: string | null,
+  status?: string | null,
+  info?: string | null,
+};
+
+export type DeleteShipmentsOnGoingInput = {
+  id?: string | null,
+};
+
+export type CreateShipmentsDoneInput = {
+  id?: string | null,
+  info?: string | null,
+  status?: string | null,
+};
+
+export type ModelShipmentsDoneConditionInput = {
+  info?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  and?: Array< ModelShipmentsDoneConditionInput | null > | null,
+  or?: Array< ModelShipmentsDoneConditionInput | null > | null,
+  not?: ModelShipmentsDoneConditionInput | null,
+};
+
+export type UpdateShipmentsDoneInput = {
+  info?: string | null,
+  status?: string | null,
+};
+
+export type DeleteShipmentsDoneInput = {
+  id?: string | null,
+};
+
+export type CreateDeclinedRFQInput = {
+  id?: string | null,
+  requestid?: string | null,
+  info?: string | null,
+};
+
+export type ModelDeclinedRFQConditionInput = {
+  requestid?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  and?: Array< ModelDeclinedRFQConditionInput | null > | null,
+  or?: Array< ModelDeclinedRFQConditionInput | null > | null,
+  not?: ModelDeclinedRFQConditionInput | null,
+};
+
+export type UpdateDeclinedRFQInput = {
+  requestid?: string | null,
+  info?: string | null,
+};
+
+export type DeleteDeclinedRFQInput = {
+  id?: string | null,
+};
+
+export type CreateAccepedOffersInput = {
+  id?: string | null,
+  requestid: string,
+  offerId: string,
+  info: string,
+  status?: string | null,
+};
+
+export type ModelAccepedOffersConditionInput = {
+  requestid?: ModelStringInput | null,
+  offerId?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  and?: Array< ModelAccepedOffersConditionInput | null > | null,
+  or?: Array< ModelAccepedOffersConditionInput | null > | null,
+  not?: ModelAccepedOffersConditionInput | null,
+};
+
+export type UpdateAccepedOffersInput = {
+  requestid?: string | null,
+  offerId?: string | null,
+  info?: string | null,
+  status?: string | null,
+};
+
+export type DeleteAccepedOffersInput = {
   id?: string | null,
 };
 
@@ -636,7 +746,7 @@ export type ModelPendingRequestsFilterInput = {
   id?: ModelIDInput | null,
   requestid?: ModelIDInput | null,
   byUserMail?: ModelStringInput | null,
-  operatedBY?: ModelStringInput | null,
+  operatedByFF?: ModelStringInput | null,
   rateId?: ModelIDInput | null,
   info?: ModelStringInput | null,
   and?: Array< ModelPendingRequestsFilterInput | null > | null,
@@ -674,6 +784,50 @@ export type ModelIMPORTRatesSimplifiedFilterInput = {
   not?: ModelIMPORTRatesSimplifiedFilterInput | null,
 };
 
+export type ModelShipmentsOnGoingFilterInput = {
+  madeByUserMail?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  operatedByFF?: ModelStringInput | null,
+  offerID?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  and?: Array< ModelShipmentsOnGoingFilterInput | null > | null,
+  or?: Array< ModelShipmentsOnGoingFilterInput | null > | null,
+  not?: ModelShipmentsOnGoingFilterInput | null,
+};
+
+export type ModelShipmentsDoneFilterInput = {
+  info?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  and?: Array< ModelShipmentsDoneFilterInput | null > | null,
+  or?: Array< ModelShipmentsDoneFilterInput | null > | null,
+  not?: ModelShipmentsDoneFilterInput | null,
+};
+
+export type ModelDeclinedRFQFilterInput = {
+  requestid?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  and?: Array< ModelDeclinedRFQFilterInput | null > | null,
+  or?: Array< ModelDeclinedRFQFilterInput | null > | null,
+  not?: ModelDeclinedRFQFilterInput | null,
+};
+
+export type ModelAccepedOffersFilterInput = {
+  requestid?: ModelStringInput | null,
+  offerId?: ModelStringInput | null,
+  info?: ModelStringInput | null,
+  status?: ModelStringInput | null,
+  and?: Array< ModelAccepedOffersFilterInput | null > | null,
+  or?: Array< ModelAccepedOffersFilterInput | null > | null,
+  not?: ModelAccepedOffersFilterInput | null,
+};
+
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+
 export type ModelStringKeyConditionInput = {
   eq?: string | null,
   le?: string | null,
@@ -683,12 +837,6 @@ export type ModelStringKeyConditionInput = {
   between?: Array< string | null > | null,
   beginsWith?: string | null,
 };
-
-export enum ModelSortDirection {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
 
 export type CreateAccountApplicationSubmissionsMutationVariables = {
   input: CreateAccountApplicationSubmissionsInput,
@@ -1148,7 +1296,7 @@ export type CreatePendingRequestsMutation = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -1167,7 +1315,7 @@ export type UpdatePendingRequestsMutation = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -1186,7 +1334,7 @@ export type DeletePendingRequestsMutation = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -1300,6 +1448,213 @@ export type DeleteImportRatesSimplifiedMutation = {
     exwCharges: string | null,
     fobCharges: string | null,
     localCharges: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateShipmentsOnGoingMutationVariables = {
+  input: CreateShipmentsOnGoingInput,
+  condition?: ModelShipmentsOnGoingConditionInput | null,
+};
+
+export type CreateShipmentsOnGoingMutation = {
+  createShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateShipmentsOnGoingMutationVariables = {
+  input: UpdateShipmentsOnGoingInput,
+  condition?: ModelShipmentsOnGoingConditionInput | null,
+};
+
+export type UpdateShipmentsOnGoingMutation = {
+  updateShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteShipmentsOnGoingMutationVariables = {
+  input: DeleteShipmentsOnGoingInput,
+  condition?: ModelShipmentsOnGoingConditionInput | null,
+};
+
+export type DeleteShipmentsOnGoingMutation = {
+  deleteShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateShipmentsDoneMutationVariables = {
+  input: CreateShipmentsDoneInput,
+  condition?: ModelShipmentsDoneConditionInput | null,
+};
+
+export type CreateShipmentsDoneMutation = {
+  createShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateShipmentsDoneMutationVariables = {
+  input: UpdateShipmentsDoneInput,
+  condition?: ModelShipmentsDoneConditionInput | null,
+};
+
+export type UpdateShipmentsDoneMutation = {
+  updateShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteShipmentsDoneMutationVariables = {
+  input: DeleteShipmentsDoneInput,
+  condition?: ModelShipmentsDoneConditionInput | null,
+};
+
+export type DeleteShipmentsDoneMutation = {
+  deleteShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateDeclinedRfqMutationVariables = {
+  input: CreateDeclinedRFQInput,
+  condition?: ModelDeclinedRFQConditionInput | null,
+};
+
+export type CreateDeclinedRfqMutation = {
+  createDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateDeclinedRfqMutationVariables = {
+  input: UpdateDeclinedRFQInput,
+  condition?: ModelDeclinedRFQConditionInput | null,
+};
+
+export type UpdateDeclinedRfqMutation = {
+  updateDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteDeclinedRfqMutationVariables = {
+  input: DeleteDeclinedRFQInput,
+  condition?: ModelDeclinedRFQConditionInput | null,
+};
+
+export type DeleteDeclinedRfqMutation = {
+  deleteDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateAccepedOffersMutationVariables = {
+  input: CreateAccepedOffersInput,
+  condition?: ModelAccepedOffersConditionInput | null,
+};
+
+export type CreateAccepedOffersMutation = {
+  createAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateAccepedOffersMutationVariables = {
+  input: UpdateAccepedOffersInput,
+  condition?: ModelAccepedOffersConditionInput | null,
+};
+
+export type UpdateAccepedOffersMutation = {
+  updateAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteAccepedOffersMutationVariables = {
+  input: DeleteAccepedOffersInput,
+  condition?: ModelAccepedOffersConditionInput | null,
+};
+
+export type DeleteAccepedOffersMutation = {
+  deleteAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1637,7 +1992,7 @@ export type GetPendingRequestsQuery = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -1659,7 +2014,7 @@ export type ListPendingRequestssQuery = {
       id: string,
       requestid: string,
       byUserMail: string,
-      operatedBY: string,
+      operatedByFF: string,
       rateId: string,
       info: string,
       createdAt: string,
@@ -1740,6 +2095,186 @@ export type ListImportRatesSimplifiedsQuery = {
       exwCharges: string | null,
       fobCharges: string | null,
       localCharges: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetShipmentsOnGoingQueryVariables = {
+  id: string,
+};
+
+export type GetShipmentsOnGoingQuery = {
+  getShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListShipmentsOnGoingsQueryVariables = {
+  filter?: ModelShipmentsOnGoingFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListShipmentsOnGoingsQuery = {
+  listShipmentsOnGoings:  {
+    __typename: "ModelShipmentsOnGoingConnection",
+    items:  Array< {
+      __typename: "ShipmentsOnGoing",
+      id: string,
+      madeByUserMail: string,
+      createdAt: string,
+      operatedByFF: string,
+      offerID: string,
+      status: string,
+      info: string | null,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetShipmentsDoneQueryVariables = {
+  id: string,
+};
+
+export type GetShipmentsDoneQuery = {
+  getShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListShipmentsDonesQueryVariables = {
+  filter?: ModelShipmentsDoneFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListShipmentsDonesQuery = {
+  listShipmentsDones:  {
+    __typename: "ModelShipmentsDoneConnection",
+    items:  Array< {
+      __typename: "ShipmentsDone",
+      id: string,
+      info: string | null,
+      status: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetDeclinedRfqQueryVariables = {
+  id: string,
+};
+
+export type GetDeclinedRfqQuery = {
+  getDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListDeclinedRfQsQueryVariables = {
+  filter?: ModelDeclinedRFQFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListDeclinedRfQsQuery = {
+  listDeclinedRFQs:  {
+    __typename: "ModelDeclinedRFQConnection",
+    items:  Array< {
+      __typename: "DeclinedRFQ",
+      id: string,
+      requestid: string | null,
+      info: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type GetAccepedOffersQueryVariables = {
+  id: string,
+};
+
+export type GetAccepedOffersQuery = {
+  getAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListAccepedOfferssQueryVariables = {
+  filter?: ModelAccepedOffersFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListAccepedOfferssQuery = {
+  listAccepedOfferss:  {
+    __typename: "ModelAccepedOffersConnection",
+    items:  Array< {
+      __typename: "AccepedOffers",
+      id: string,
+      requestid: string,
+      offerId: string,
+      info: string,
+      status: string | null,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type ByRequestIdQueryVariables = {
+  requestid?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelPendingRequestsFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ByRequestIdQuery = {
+  byRequestID:  {
+    __typename: "ModelPendingRequestsConnection",
+    items:  Array< {
+      __typename: "PendingRequests",
+      id: string,
+      requestid: string,
+      byUserMail: string,
+      operatedByFF: string,
+      rateId: string,
+      info: string,
       createdAt: string,
       updatedAt: string,
     } | null > | null,
@@ -1831,6 +2366,32 @@ export type SimplifiedByStateExwQuery = {
       fobCharges: string | null,
       localCharges: string | null,
       createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken: string | null,
+  } | null,
+};
+
+export type ByUserMailQueryVariables = {
+  madeByUserMail?: string | null,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelShipmentsOnGoingFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ByUserMailQuery = {
+  byUserMail:  {
+    __typename: "ModelShipmentsOnGoingConnection",
+    items:  Array< {
+      __typename: "ShipmentsOnGoing",
+      id: string,
+      madeByUserMail: string,
+      createdAt: string,
+      operatedByFF: string,
+      offerID: string,
+      status: string,
+      info: string | null,
       updatedAt: string,
     } | null > | null,
     nextToken: string | null,
@@ -2200,7 +2761,7 @@ export type OnCreatePendingRequestsSubscription = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -2214,7 +2775,7 @@ export type OnUpdatePendingRequestsSubscription = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -2228,7 +2789,7 @@ export type OnDeletePendingRequestsSubscription = {
     id: string,
     requestid: string,
     byUserMail: string,
-    operatedBY: string,
+    operatedByFF: string,
     rateId: string,
     info: string,
     createdAt: string,
@@ -2327,6 +2888,153 @@ export type OnDeleteImportRatesSimplifiedSubscription = {
     exwCharges: string | null,
     fobCharges: string | null,
     localCharges: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateShipmentsOnGoingSubscription = {
+  onCreateShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateShipmentsOnGoingSubscription = {
+  onUpdateShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteShipmentsOnGoingSubscription = {
+  onDeleteShipmentsOnGoing:  {
+    __typename: "ShipmentsOnGoing",
+    id: string,
+    madeByUserMail: string,
+    createdAt: string,
+    operatedByFF: string,
+    offerID: string,
+    status: string,
+    info: string | null,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateShipmentsDoneSubscription = {
+  onCreateShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateShipmentsDoneSubscription = {
+  onUpdateShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteShipmentsDoneSubscription = {
+  onDeleteShipmentsDone:  {
+    __typename: "ShipmentsDone",
+    id: string,
+    info: string | null,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateDeclinedRfqSubscription = {
+  onCreateDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateDeclinedRfqSubscription = {
+  onUpdateDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteDeclinedRfqSubscription = {
+  onDeleteDeclinedRFQ:  {
+    __typename: "DeclinedRFQ",
+    id: string,
+    requestid: string | null,
+    info: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateAccepedOffersSubscription = {
+  onCreateAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateAccepedOffersSubscription = {
+  onUpdateAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteAccepedOffersSubscription = {
+  onDeleteAccepedOffers:  {
+    __typename: "AccepedOffers",
+    id: string,
+    requestid: string,
+    offerId: string,
+    info: string,
+    status: string | null,
     createdAt: string,
     updatedAt: string,
   } | null,
