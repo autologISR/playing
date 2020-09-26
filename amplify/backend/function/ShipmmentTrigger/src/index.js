@@ -5,9 +5,10 @@ const documentClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
  
-  
   //eslint-disable-line
-  console.log(event.Records[0]);
+  // console.log("xxyyxx -> ",event.Records[0].dynamodb.NewImage.info.S);
+  
+  // console.log("pendingid -> ", pendingId)
   if(event.Records[0].eventName === "INSERT"){
     try{
       
@@ -18,62 +19,54 @@ exports.handler = async (event) => {
       console.log("this is tableName -> ", tableName)
       switch (tableName) {
         case 'ShipmentsOnGoing':
-            await updatePendingTable(0).then(x=>{
+            let pendingId1 = JSON.parse(event.Records[0].dynamodb.NewImage.info.S).pendingiD
+            await updatePendingTable(pendingId1).then(x=>{
                   console.log("x -> ", x)
                   })
-          
           break;
+          
         case 'DeclinedRFQ':
-          DeclinedRFQ(event.Records[0].dynamodb.NewImage)
+           let pendingId2 = JSON.parse(event.Records[0].dynamodb.NewImage.info.S).pendingiD
+            await updatePendingTable(pendingId2).then(x=>{
+                  console.log("x -> ", x)
+                  })
+          break;
+          // DeclinedRFQ(event.Records[0].dynamodb.NewImage)
           break
+          
         default:
           break
       }
     } catch(err){
       console.log("error -> ", err)
     }
-    
-    
- 
-  // }
+}
   return Promise.resolve("Successfully processed DynamoDB record");
 };
   
-  //also appends offer accepted
-function ShipmentsOnGoing(record){
-  
-  console.log("this is record -> " , record)
-  
-  updatePendingTable(requestID)
-  
-}
 
-function DeclinedRFQ(record){
-   let pendingId = ""
-  updatePendingTable(pendingId)
-}
+
 
 //actually deleting the pending from pending table
-async function updatePendingTable(requestID){
-  console.log("requestID -> ", requestID)
-  
-  var params = {
-      TableName : 'PendingRequests-73q7nlgeevdp7fm4c6zv7mppee-dev',
-      Key: {
-        id: "123",
-        NumberRangeKey: 1
-      }
-  };
-
-  
+async function updatePendingTable(PendingID){
+  console.log("requestID -> ", PendingID)
   console.log("starting to delete..")
     
-  return(documentClient.delete({
-    TableName: 'PendingRequests-73q7nlgeevdp7fm4c6zv7mppee-dev',
-    Key: {
-      id: '123' 
-    }
-  })
-  .promise()
-  )
+  return(
+       documentClient.delete({
+          TableName: 'PendingRequests-73q7nlgeevdp7fm4c6zv7mppee-dev',
+          Key: {
+            id: PendingID 
+            }
+           })
+            .promise()
+      )
 }
+ 
+  // var params = {
+  //     TableName : 'PendingRequests-73q7nlgeevdp7fm4c6zv7mppee-dev',
+  //     Key: {
+  //       id: PendingID,
+  //       NumberRangeKey: 1
+  //     }
+  // };

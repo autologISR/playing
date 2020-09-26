@@ -24,29 +24,16 @@ const App = () => {
   return (
     <Router>
       <div>
-        <Route exact path="/" component={(props: any) => <Home />} />
         <Route
-          path="/dashboard"
+          path="/"
           component={(props: any) => (
             <Dashboard
-              userType={curUser.userType}
-              cognitoUser={curUser.cognitoUser}
+              userType={"Team"}
+              cognitoUser={{}}
+              // userType={curUser.userType}
+              // cognitoUser={curUser.cognitoUser}
             />
           )}
-        />
-        <Route
-          path="/login"
-          component={(props: any) => (
-            <Login setCurUser={setCurUser} {...props} />
-          )}
-        />
-        <Route
-          path="/offers"
-          component={(props: any) => <Offers {...props} />}
-        />
-        <Route
-          path="/reviewPndingsRFQ"
-          component={(props: any) => <ReveiwPendings {...props} />}
         />
       </div>
     </Router>
@@ -54,3 +41,28 @@ const App = () => {
 };
 
 export default App;
+
+//<Route exact path="/" component={(props: any) => <Home />} />
+// <Route
+//   path="/dashboard"
+//   component={(props: any) => (
+//     <Dashboard
+//       userType={curUser.userType}
+//       cognitoUser={curUser.cognitoUser}
+//     />
+//   )}
+// />
+// <Route
+//   path="/login"
+//   component={(props: any) => (
+//     <Login setCurUser={setCurUser} {...props} />
+//   )}
+// />
+// <Route
+//   path="/offers"
+//   component={(props: any) => <Offers {...props} />}
+// />
+// <Route
+//   path="/reviewPndingsRFQ"
+//   component={(props: any) => <ReveiwPendings {...props} />}
+// />

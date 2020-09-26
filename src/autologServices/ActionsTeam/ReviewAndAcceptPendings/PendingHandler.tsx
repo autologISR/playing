@@ -22,14 +22,8 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-interface Appending {
-  id: string;
+interface DeclinecType {
   requestid: string;
-  byUserMail: string;
-
-  operatedBY: string;
-  rateId: string;
-
   info: string;
 }
 
@@ -79,6 +73,51 @@ export const PendingDialog: FunctionComponent<pendingTypeDialog> = ({
     let helperPendingID = curPending.id;
     setCurPendingRequestID(helperPendingID);
   }, []);
+
+  async function appedndDeclinedRFQTable(pendingiD: string) {
+    let helper: infoCurPending = JSON.parse(JSON.stringify(curPending));
+
+    console.log(
+      "this is helper..NEWNEWNEW -> ",
+      JSON.parse(helper.info)
+      // JSON.stringify(curPending.info.offers)
+    );
+
+    //
+
+    let offerAcceptedByUser = JSON.parse(helper.info).offerAccepted;
+    let originalRFQ = JSON.parse(helper.info).offerAccepted;
+
+    let infoH = {
+      originalRFQ: originalRFQ,
+      offerAccepted: offerAcceptedByUser,
+      requestID: curPending.requestid,
+      pendingiD: pendingiD,
+      declinedPending: curPending,
+    };
+
+    let dateHelper = new Date().toString();
+
+    // #info.originalRFQ
+    // #info.offerAccepted
+    //inputToAdd - the item we add to PENDING
+    let inputToAdd: DeclinecType = {
+      requestid: curPending.requestid,
+      info: JSON.stringify(infoH),
+    };
+    console.log("this is inputToAdd to Appending ->  ", inputToAdd);
+
+    //first appending shipment table
+    let responseFromShipmentOnGoing = await API.graphql(
+      graphqlOperation(mutations.createDeclinedRfq, {
+        input: inputToAdd,
+      })
+    );
+    if (responseFromShipmentOnGoing) {
+      //shipment Added Successfuly
+      console.log("createShipmentsOnGoing -> ", responseFromShipmentOnGoing);
+    }
+  }
 
   async function appedndShipmentsTable(pendingiD: string) {
     let helper: infoCurPending = JSON.parse(JSON.stringify(curPending));
@@ -135,7 +174,14 @@ export const PendingDialog: FunctionComponent<pendingTypeDialog> = ({
   };
 
   const handleDecline = async () => {
-    // await appedndShipmentsTable();
+    if (curPendingRequestID.length > 0) {
+      console.log(
+        "entered if.. this is curPendingRequestID ->",
+        curPendingRequestID
+      );
+      await appedndDeclinedRFQTable(curPendingRequestID);
+    }
+
     // setOpen(false);
     setSubmitted(true);
   };
