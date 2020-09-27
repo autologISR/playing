@@ -34,7 +34,7 @@ const validateRequestInfo = (values: IValues) => {
 const quoteRequestFormMap = new Map([
   ["GeneralInfo", AddGeneralInfoFormProps],
 
-  ["SupplierDetails", AddSupplierDetails],
+  // ["SupplierDetails", AddSupplierDetails],
 
   ["ShipmentDetailsAir", ShipmentDetailsAir],
   ["ShipmentDetailsOceanFCL", ShipmentDetailsOceanFCL],
@@ -49,39 +49,43 @@ const quoteRequestFormMap = new Map([
   ["LocationFOBOceanFarEast", AddLocationFOBOceanFarEast],
 ]);
 
+
+
+
 export function newQuoteRequestNextStageCallback(props: StepsCallbackProps) {
   const { stageValues } = props;
 
-  const { incoTerms, airOcean, shipmentType, region } = stageValues;
+  const { incoterms, modeOfTransport, cargoLoad, region } = stageValues;
 
-  const exw = ["SupplierDetails", "ShipmentDetails"];
   const fob = ["LocationFOB", "ShipmentDetails"];
   // const cif = ["PickUp", "FreightTransport", "Locals"];
   // const courier = ["Courier", "Locals"];
+    // const exw = ["SupplierDetails", "ShipmentDetails"];
+
 
   const getSteps = (step: string) => {
     switch (step) {
-      case "SupplierDetails":
-        return "SupplierDetails";
+      // case "SupplierDetails":
+      //   return "SupplierDetails";
 
       case "ShipmentDetails":
-        if (airOcean === "Ocean") {
-          return "ShipmentDetails" + "Ocean" + shipmentType;
+        if (modeOfTransport === "Ocean") {
+          return "ShipmentDetails" + "Ocean" + cargoLoad;
         } else {
           return "ShipmentDetails" + "Air";
         }
 
       case "LocationFOB":
-        return "LocationFOB" + airOcean + region;
+        return "LocationFOB" + modeOfTransport + region;
     }
   };
 
   const stagesArr = () => {
-    switch (incoTerms) {
+    switch (incoterms) {
       case "FOB":
         return fob;
-      case "EXW":
-        return exw;
+      // case "EXW":
+      // return;
       // case "CIF":
       //   return cif;
       // case "Courier":

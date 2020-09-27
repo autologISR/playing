@@ -4,6 +4,7 @@ import { uuid } from "uuidv4";
 import { IValues } from "../../../common/form/formTypes";
 import axios from "axios";
 import * as mutations from "../../../graphql/mutations";
+import { listDeclinedRfQs } from "../../../graphql/queries";
 // import * as queries from "../../../graphql/queries";
 // import { Switch } from "@material-ui/core";
 
@@ -55,17 +56,21 @@ async function getOffers(requestForQuote: IValues, userMail: string) {
 //todo - add params Type
 async function AppenedAllRequests(offersHelper: any, submissionData: IValues) {
   let requestID = offersHelper.data.requestID;
-  let terms = submissionData.GeneralInfo.incoTerms;
-  let airOcean = submissionData.GeneralInfo.airOcean;
+  let terms = submissionData.GeneralInfo.incoterms;
+  let modeOfTransport = submissionData.GeneralInfo.modeOfTransport;
 
   let inputToAddAllRequest;
   switch (terms) {
     case "FOB":
-      if (airOcean === "Air")
+      if (modeOfTransport === "Air")
         inputToAddAllRequest = GetInputFobAir(
           offersHelper.data,
           submissionData
         );
+      console.log(
+        "fob listDeclinedRfQs.. this is inputToAddAllRequest ->",
+        inputToAddAllRequest
+      );
       break;
 
     default:
@@ -90,15 +95,17 @@ async function AppenedAllRequests(offersHelper: any, submissionData: IValues) {
 function GetInputFobAir(offersData: any, submissionData: IValues) {
   let id = offersData.requestID;
   let fromRegion = submissionData.GeneralInfo.region;
-  let fromState, fromPort;
-  let terms = submissionData.GeneralInfo.incoTerms;
-  let airOcean = submissionData.GeneralInfo.airOcean;
+  // let fromState, submissionData.;
+  let incoterms = submissionData.GeneralInfo.incoterms;
+  let modeOfTransport = submissionData.GeneralInfo.modeOfTransport;
   let madeByUserMail = offersData.madeByUserMail;
   let createdAt = new Date();
   let details = { offersData, submissionData };
   let Test = "NO";
   let offersCount = offersData.relevantOffers.length;
   let offers = offersData.relevantOffers;
+
+  let fromState, fromPort;
 
   switch (fromRegion) {
     case "USA":
@@ -120,8 +127,9 @@ function GetInputFobAir(offersData: any, submissionData: IValues) {
     id: id,
     fromRegion: fromRegion,
     fromState: fromState,
-    terms: terms,
-    airOcean: airOcean,
+    fromPort: fromPort,
+    incoterms: incoterms,
+    modeOfTransport: modeOfTransport,
     madeByUserMail: madeByUserMail,
     createdAt: createdAt,
     details: JSON.stringify(details),
@@ -132,10 +140,15 @@ function GetInputFobAir(offersData: any, submissionData: IValues) {
 }
 
 export const QuoteRequestSubmissions = async (submissionData: IValues) => {
-  const currentUserInfo = await Auth.currentUserInfo();
-  const userMail = currentUserInfo.attributes.email;
-
-  const { incoTerms, airOcean, region } = submissionData.GeneralInfo;
+  // const currentUserInfo = await Auth.currentUserInfo();
+  // const userMail = currentUserInfo.attributes.email;
+  let userMail = "autolog@gmail.com<fake>";
+  const {
+    incoterms,
+    modeOfTransport,
+    cargoLoad,
+    region,
+  } = submissionData.GeneralInfo;
 
   let offersHelper = await getOffers(submissionData, userMail);
   if (offersHelper) {

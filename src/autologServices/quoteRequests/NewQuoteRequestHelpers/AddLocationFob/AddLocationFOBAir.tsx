@@ -65,9 +65,9 @@ export const AddLocationFOBAirUSA: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobAirUSAForm,
   submitButtonTitle: "Next",
-  title: "Choose airport",
+  title: "Choose state and airport",
 
-  validate: function (values: IValues) {
+  validate: function(values: IValues) {
     return {};
   },
 };
@@ -76,8 +76,8 @@ export const AddLocationFOBAirEurope: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobAirEuropeForm,
   submitButtonTitle: "Next",
-  title: "Choose airport",
-  validate: function (values: IValues) {
+  title: "Choose state and airport",
+  validate: function(values: IValues) {
     return {};
   },
 };
@@ -86,9 +86,9 @@ export const AddLocationFOBAirFarEast: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobAirFarEastForm,
   submitButtonTitle: "Next",
-  title: "Choose airport",
+  title: "Choose state and airport",
 
-  validate: function (values: IValues) {
+  validate: function(values: IValues) {
     return {};
   },
 };

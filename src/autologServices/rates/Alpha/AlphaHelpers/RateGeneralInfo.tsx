@@ -38,8 +38,8 @@ export const rateGeneralInfoForm = [
     required: true,
   },
   {
-    name: "incoterm",
-    label: "Incoterm",
+    name: "incoterms",
+    label: "Incoterms",
     editor: "radio",
     options: ["FOB"],
     // options: ["EXW", "FOB", "CIF", "DAP", "Courier"],
@@ -88,8 +88,8 @@ export const RateGeneralInfoProps: IFormProps = {
       errors.direction = "Rate Direction is required.";
     }
 
-    if (!("incoterm" in values)) {
-      errors.incoterm = "Rate Incoterm is required.";
+    if (!("incoterms" in values)) {
+      errors.incoterms = "Rate Incoterm is required.";
     }
     if (!("modeOfTransport" in values)) {
       errors.modeOfTransport = "Rate Mode of Transport is required.";

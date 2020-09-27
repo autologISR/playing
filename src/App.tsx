@@ -25,6 +25,7 @@ const App = () => {
     <Router>
       <div>
         <Route
+          exact
           path="/"
           component={(props: any) => (
             <Dashboard
@@ -34,6 +35,11 @@ const App = () => {
               // cognitoUser={curUser.cognitoUser}
             />
           )}
+        />
+        <Route exact path="/offers" component={(props: any) => <Offers />} />
+        <Route
+          path="/reviewPndingsRFQ"
+          component={(props: any) => <ReveiwPendings {...props} />}
         />
       </div>
     </Router>
@@ -61,7 +67,7 @@ export default App;
 // <Route
 //   path="/offers"
 //   component={(props: any) => <Offers {...props} />}
-// />
+// // />
 // <Route
 //   path="/reviewPndingsRFQ"
 //   component={(props: any) => <ReveiwPendings {...props} />}

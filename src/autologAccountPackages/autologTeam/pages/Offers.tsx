@@ -110,10 +110,10 @@ export const Offers: FunctionComponent = () => {
       .toString()
       .slice(4, queryString.toString().length);
 
-    //fetching request id from url   
+    //fetching request id from url
     setRequestId(idHelper);
 
-    //at my offers we get the relevant offers for this request  
+    //at my offers we get the relevant offers for this request
     myOffers(idHelper).then((res: any) => {
       if (res) {
         console.log("results from getAllRequests by idHelper -> ", res);
@@ -201,16 +201,19 @@ export const Offers: FunctionComponent = () => {
       return (
         <>
           <div>
+            <h3>Offers</h3>
             {offers.map((offer: offerType, index: number) => {
               return (
                 <div>
                   <OffersHandler
+                    offer={offer}
                     index={index}
                     operatedBy={offer.operatedBy}
                     totalForThisRate={offer.totalForThisRate}
                     rateID={offer.rateID}
                     setHighlight={setHighlight}
                   />
+                  <br />
                 </div>
               );
             })}

@@ -246,8 +246,8 @@ export const getAllRequests = /* GraphQL */ `
       fromRegion
       fromState
       fromPort
-      terms
-      airOcean
+      incoterms
+      modeOfTransport
       madeByUserMail
       createdAt
       status
@@ -271,8 +271,8 @@ export const listAllRequestss = /* GraphQL */ `
         fromRegion
         fromState
         fromPort
-        terms
-        airOcean
+        incoterms
+        modeOfTransport
         madeByUserMail
         createdAt
         status

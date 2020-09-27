@@ -27,43 +27,43 @@ type AccountApplicationSubmissions @model {
 enum RateType {
   FOBImportOCEANLCL
   FOBImportOCEANFCL
-  FOBImportAIRLCL
+  FOBImportAIR
 
   EXWImportOCEANFCL
   EXWImportOCEANLCL
-  EXWImportAIRLCL
+  EXWImportAIR
 
   CIFImportOCEANLCL
   CIFImportOCEANFCL
-  CIFImportAIRLCL
+  CIFImportAIR
 
   DAPImportOCEANLCL
   DAPImportOCEANFCL
-  DAPImportAIRLCL
+  DAPImportAIR
 
   DDPImportOCEANLCL
   DDPImportOCEANFCL
-  DDPImportAIRLCL
+  DDPImportAIR
 
   FOBExportOCEANLCL
   FOBExportOCEANFCL
-  FOBExportAIRLCL
+  FOBExportAIR
 
   EXWExportOCEANFCL
   EXWExportOCEANLCL
-  EXWExportAIRLCL
+  EXWExportAIR
 
   CIFExportOCEANLCL
   CIFExportOCEANFCL
-  CIFExportAIRLCL
+  CIFExportAIR
 
   DAPExportOCEANLCL
   DAPExportOCEANFCL
-  DAPExportAIRLCL
+  DAPExportAIR
 
   DDPExportOCEANLCL
   DDPExportOCEANFCL
-  DDPExportAIRLCL
+  DDPExportAIRL
 
   COURIERExport
   COURIERImport
@@ -76,7 +76,7 @@ type RateSubmission
   rateName: String!
   freightForwarderName: String!
   carrierName: String!
-  rateType: RateType!
+  rateType: String!
   validFrom: String!
   validTo: String!
   originCharges: String
@@ -155,6 +155,7 @@ enum RequestStatus {
   ApprovedDone
   Declined
 }
+
 ###
 ###to do - need to update Allrequest by status
 type AllRequests @model {
@@ -162,8 +163,8 @@ type AllRequests @model {
   fromState: String
   fromPort: String
 
-  terms: String!
-  airOcean: String!
+  incoterms: String!
+  modeOfTransport: String!
 
   madeByUserMail: String!
   createdAt: String!
@@ -270,4 +271,3 @@ type AccepedOffers @model {
   info: String!
   status: String
 }
-

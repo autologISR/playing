@@ -65,8 +65,8 @@ export const AddLocationFOBOceanUSA: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobOceanUSAForm,
   submitButtonTitle: "Next",
-  title: "Choose port",
-  validate: function (values: IValues) {
+  title: "Choose state and port",
+  validate: function(values: IValues) {
     return {};
   },
 };
@@ -75,8 +75,8 @@ export const AddLocationFOBOceanEurope: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobOceanEuropeForm,
   submitButtonTitle: "Next",
-  title: "Choose port",
-  validate: function (values: IValues) {
+  title: "Choose state and port",
+  validate: function(values: IValues) {
     return {};
   },
 };
@@ -85,8 +85,8 @@ export const AddLocationFOBOceanFarEast: IFormProps = {
   formSystemMessage: quoteRequestCreationMessages,
   schema: locationFobOceanFarEastForm,
   submitButtonTitle: "Next",
-  title: "Choose port",
-  validate: function (values: IValues) {
+  title: "Choose state and port",
+  validate: function(values: IValues) {
     return {};
   },
 };

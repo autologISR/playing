@@ -300,8 +300,8 @@ export const onCreateAllRequests = /* GraphQL */ `
       fromRegion
       fromState
       fromPort
-      terms
-      airOcean
+      incoterms
+      modeOfTransport
       madeByUserMail
       createdAt
       status
@@ -320,8 +320,8 @@ export const onUpdateAllRequests = /* GraphQL */ `
       fromRegion
       fromState
       fromPort
-      terms
-      airOcean
+      incoterms
+      modeOfTransport
       madeByUserMail
       createdAt
       status
@@ -340,8 +340,8 @@ export const onDeleteAllRequests = /* GraphQL */ `
       fromRegion
       fromState
       fromPort
-      terms
-      airOcean
+      incoterms
+      modeOfTransport
       madeByUserMail
       createdAt
       status

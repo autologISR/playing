@@ -3,21 +3,24 @@ AWS.config.update({ region: "eu-west-1" });
 const docClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
+  console.log("event -> ", event);
   if (event.Records[0].eventName === "INSERT") {
-    console.log(event.Records[0].dynamodb.NewImage);
+    console.log("entered First If");
+    console.log("NewImage -> ", event.Records[0].dynamodb.NewImage);
 
     let rate = event.Records[0].dynamodb.NewImage;
     let extraID = event.Records[0].eventID;
     let sharedInfo = getSharedInfo(rate, extraID);
     // sharedInfo = {rateHash,id rateID,rateName,freightForwarderName,carrierName,validFrom,validTo  }
     //rateHah === rateType
+    console.log("this is shared Info from Handler -> ", sharedInfo);
 
-    let FOBImportAIRLCL_proccessing;
+    let FOBImportAIR_proccessing;
     let numOfIterations;
     let index = 0;
 
     switch (sharedInfo.rateHash) {
-      case "FOBImportAIRLCL":
+      case "FOBImportAIR":
         console.log("Inside switch.. entered FOBImportAIRLCL");
 
         console.log(
@@ -25,14 +28,11 @@ exports.handler = async (event) => {
           "rate -> ",
           rate
         );
-        FOBImportAIRLCL_proccessing = GET_FOBImportAIRLCL_Details(
-          rate,
-          sharedInfo
-        );
-        // FOBImportAIRLCL_proccessing is of shape {airTableFix, sharedInfoFix, localChargesFix, fobRules}
+        FOBImportAIR_proccessing = GET_FOBImportAIR_Details(rate, sharedInfo);
+        // FOBImportAIRLCL_proccessing is of shape {airTableFix,  sharedInfoFix,  localCharges, freightRulesAndLimits}
 
-        numOfIterations = FOBImportAIRLCL_proccessing.airTableFix.length;
-        // console.log("airTableFix -> ", FOBImportAIRLCL_proccessing.airTableFix)
+        numOfIterations = FOBImportAIR_proccessing.airTableFix.length;
+        console.log("FOBImportAIR_proccessing -> ", FOBImportAIR_proccessing);
         // console.log("sharedInfoFix -> ", FOBImportAIRLCL_proccessing.sharedInfoFix)
         // console.log("localChargesFix -> ", FOBImportAIRLCL_proccessing.localChargesFix)
 
@@ -40,12 +40,12 @@ exports.handler = async (event) => {
         console.log("numOfIterations -> ", numOfIterations);
 
         for (index = 0; index < numOfIterations; index++) {
-          let curRow = getRowToUpdate_FOB_AIRLCL(
-            FOBImportAIRLCL_proccessing.airTableFix[index],
-            FOBImportAIRLCL_proccessing.sharedInfoFix,
+          let curRow = getRowToUpdate_FOB_AIR(
+            FOBImportAIR_proccessing.airTableFix[index],
+            FOBImportAIR_proccessing.sharedInfoFix,
             index,
-            FOBImportAIRLCL_proccessing.localChargesFix,
-            FOBImportAIRLCL_proccessing.fobRules
+            FOBImportAIR_proccessing.localCharges,
+            FOBImportAIR_proccessing.freightRulesAndLimits
           );
           console.log("HANDLER -> curRow To Append -> ", curRow);
 
@@ -100,15 +100,116 @@ function getSharedInfo(rate, extraID) {
     validTo: rate.validTo.S,
   };
 
+  console.log("line 105 - returning sharedInfo -> ", sharedInfo);
   return sharedInfo;
 }
 
-function getRowToUpdate_FOB_AIRLCL(
+///////////////////////////////////////////////////////////////
+////////////////HELPERS FOB AIR////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+function GET_FOBImportAIR_Details(rate, sharedInfo) {
+  let freightTransportCharges = JSON.parse(rate.freightTransportCharges.S);
+
+  // let freightPart = JSON.parse(rate.freightTransportCharges.S);
+
+  let airTable = JSON.parse(JSON.parse(rate.freightTransportCharges.S).airTable)
+    .grid;
+  let FreightPart = JSON.parse(rate.freightTransportCharges.S);
+  let freightRulesAndLimits = {
+    limitHeight: FreightPart.limitHeight,
+    limitWeightShippment: FreightPart.limitWeightShippment,
+    limitWeightBox: FreightPart.limitWeightBox,
+    airRateRatio: FreightPart.airRateRatio,
+  };
+
+  let localChargesFixPart = JSON.parse(
+    JSON.parse(rate.localCharges.S).LocalsAirFixTable
+  ).grid;
+  let localChargesByWeightPart = JSON.parse(
+    JSON.parse(rate.localCharges.S).LocalsAirByWeightTable
+  ).grid;
+  let Yata = JSON.parse(JSON.parse(rate.localCharges.S).yata);
+
+  let localChargesPart = {
+    localChargesFixPart: localChargesFixPart,
+    localChargesByWeightPart: localChargesByWeightPart,
+    Yata: Yata,
+  };
+
+  // console.log("localChargesFixPart - ", localChargesFixPart)
+  // console.log("localChargesByWeightPart - ", localChargesByWeightPart)
+  // console.log("Yata - ", Yata)
+  // console.log("214 -- airTable -> ", airTable)
+
+  //fixed Air Tabel
+  let airTableFixedHelper = fixAirTable(airTable);
+  console.log("airTableFixed -> ", airTableFixedHelper);
+
+  let returnToHandler = {
+    sharedInfoFix: sharedInfo,
+    airTableFix: airTableFixedHelper,
+    freightRulesAndLimits: freightRulesAndLimits,
+    localCharges: localChargesPart,
+  };
+  return returnToHandler;
+}
+
+//helper method, slices the first rows of airTable, until the first empty row
+function fixAirTable(airTable) {
+  let firstEmptyRow = findFirstEmptyRowInAirTable(airTable);
+  let sliced = sliceAirTable(airTable, firstEmptyRow - 1);
+
+  console.log("this is sliced -> ", sliced);
+  return sliced;
+}
+
+//helper method, findS First Empty Row In Air Table
+function findFirstEmptyRowInAirTable(airTable) {
+  // console.log("inside findFirstEmptyRowInAirTable, this is table recived ", AirTable)
+  let i = 1;
+  let firstRow = 10000;
+  console.log("findFirstEmptyRowInAirTable -> this is airTable -> ", airTable);
+  for (i = 1; i < airTable.length; i++) {
+    let curRow = airTable[i];
+    // console.log("curRow -> ", curRow)
+
+    curRow.forEach((element) => {
+      if (element.field === "portFrom" && element.value === "") {
+        if (i < firstRow) {
+          firstRow = i;
+          return;
+        }
+      }
+    });
+  }
+
+  console.log(
+    "findFirstEmptyRowInAirTable -> first empty row in airTable-> ",
+    firstRow
+  );
+  return firstRow;
+}
+
+//slices the airTable
+//return ARRAY of first rows until first empty row
+function sliceAirTable(airTable, lastRow) {
+  let ans = [];
+  let index = 1;
+  while (index <= lastRow) {
+    ans.push(airTable[index]);
+    index++;
+  }
+  console.log("this is sliced -> ", ans);
+  return ans;
+}
+
+function getRowToUpdate_FOB_AIR(
   row,
   sharedInfo,
   idHelperIndex,
   localCharges,
-  fobRules
+  freightRulesAndLimits
 ) {
   let portFrom = "";
   let portTo = "";
@@ -179,114 +280,11 @@ function getRowToUpdate_FOB_AIRLCL(
     validTo: sharedInfo.validTo,
 
     portFrom: portFrom,
-    portTo: portTo,
-    fobCharges: JSON.stringify(fobRules),
+    portTo: "TLV",
+    fobCharges: JSON.stringify(freightRulesAndLimits),
     localCharges: JSON.stringify(localCharges),
   };
 
-  // console.log(rowToUpdate)
+  console.log(rowToUpdate);
   return rowToUpdate;
-}
-
-//////////////////////////////////////////////////////
-////////////////HELPERS///////////////////////////////
-//////////////////////////////////////////////////////
-
-function GET_FOBImportAIRLCL_Details(rate, sharedInfo) {
-  let freightTransportCharges = JSON.parse(rate.freightTransportCharges.S);
-  console.log(
-    "FUNCTION GET_FOBImportAIRLCL_Details !! freightTransportCharges --> ",
-    freightTransportCharges
-  );
-
-  let freightPart = JSON.parse(rate.freightTransportCharges.S);
-
-  console.log("rate -> ", rate);
-  let localChargesPart = JSON.parse(rate.localCharges.S).additionalCharges;
-
-  let airTable = JSON.parse(rate.freightTransportCharges.S).airTable;
-  let helperxxx = new Array(airTable);
-  let realAirTable = JSON.parse(helperxxx[0]);
-
-  let airTableRules = JSON.parse(rate.freightTransportCharges.S).rules;
-  let helperyyy = new Array(airTableRules);
-  let realAirTableRules = JSON.parse(helperyyy[0]);
-
-  let indexRules = 0;
-  let ansRules = [];
-  for (
-    indexRules = 0;
-    indexRules < realAirTableRules.grid.length;
-    indexRules++
-  ) {
-    ansRules.push(realAirTableRules.grid[indexRules]);
-  }
-
-  console.log(
-    "FUNCTION GET_FOBImportAIRLCL_Details !!ansRules   -> ",
-    ansRules
-  );
-
-  //fixed Air Tabel
-  let airTableFixedHelper = fixAirTable(realAirTable);
-  // console.log("airTableFixed -> ", airTableFixed)
-
-  let returnToHandler = {
-    airTableFix: airTableFixedHelper,
-    sharedInfoFix: sharedInfo,
-    localChargesFix: localChargesPart,
-    fobRules: ansRules,
-  };
-  return returnToHandler;
-}
-
-//helper method, slices the first rows of airTable, until the first empty row
-function fixAirTable(airTable) {
-  let firstEmptyRow = findFirstEmptyRowInAirTable(airTable);
-  let sliced = sliceAirTable(airTable, firstEmptyRow - 1);
-
-  // console.log("this is sliced -> ", sliced)
-  return sliced;
-}
-
-//helper method, findS First Empty Row In Air Table
-function findFirstEmptyRowInAirTable(airTable) {
-  // console.log("inside findFirstEmptyRowInAirTable, this is table recived ", AirTable)
-  let i = 1;
-  let firstRow = 10000;
-  console.log(
-    "findFirstEmptyRowInAirTable -> this is airTable -> ",
-    airTable.grid
-  );
-  for (i = 1; i < airTable.grid.length; i++) {
-    let curRow = airTable.grid[i];
-    // console.log("curRow -> ", curRow)
-
-    curRow.forEach((element) => {
-      if (element.field === "portFrom" && element.value === "") {
-        if (i < firstRow) {
-          firstRow = i;
-          return;
-        }
-      }
-    });
-  }
-
-  console.log(
-    "findFirstEmptyRowInAirTable -> first empty row in airTable-> ",
-    firstRow
-  );
-  return firstRow;
-}
-
-//slices the airTable
-//return ARRAY of first rows until first empty row
-function sliceAirTable(airTable, lastRow) {
-  let ans = [];
-  let index = 1;
-  while (index <= lastRow) {
-    ans.push(airTable.grid[index]);
-    index++;
-  }
-  return ans;
 }

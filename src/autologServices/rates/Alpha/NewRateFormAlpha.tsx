@@ -18,7 +18,7 @@ import { LocalsAIRForm } from "./AlphaHelpers/LOCAL/LocalAIR";
 
 export const newRatesStepFormMap = new Map([
   ["GeneralInfo", RateGeneralInfoProps],
-  
+
   ["FreightTransportOCEANLCL", FreightTransportOceanLclForm],
   ["FreightTransportOCEANFCL", FreightTransportOceanFclForm],
   ["FreightTransportAIR", FreightTransportAirForm],
@@ -30,9 +30,9 @@ export const newRatesStepFormMap = new Map([
 
 export function newRateCreationStepsCallback(props: StepsCallbackProps) {
   const { stageValues } = props;
-
+  console.log("hello ! ", props);
   //modeOfTransport = airOcean
-  const { direction, modeOfTransport, cargoLoad, incoterm } = stageValues;
+  const { direction, modeOfTransport, cargoLoad, incoterms } = stageValues;
 
   const fob = ["FreightTransport", "Locals"];
   // const fob = ["FreightTransport", "Locals"];
@@ -48,7 +48,7 @@ export function newRateCreationStepsCallback(props: StepsCallbackProps) {
     direction,
     modeOfTransport,
     cargoLoad,
-    incoterm
+    incoterms
   );
   const getSteps = (step: string) => {
     if (direction === "Import") {
@@ -72,17 +72,12 @@ export function newRateCreationStepsCallback(props: StepsCallbackProps) {
             return "Locals" + "AIR";
           }
           break;
-
-        default:
-          console.log("defauilt..");
-          return "GeneralInfo";
-          break;
       }
     }
   };
 
   const stagesArr = () => {
-    switch (incoterm) {
+    switch (incoterms) {
       case "FOB":
         return fob;
       case "EXW":

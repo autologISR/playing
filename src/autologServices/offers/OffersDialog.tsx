@@ -54,7 +54,9 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
 }: offerTypeDialog) => {
   const [open, setOpen] = React.useState(true);
   const [submitted, setSubmitted] = React.useState(false);
-
+  const [curOfferParsed, setCurOfferParsed] = React.useState(
+    JSON.parse(curOffer)
+  );
   async function appedndPendingTable() {
     let originRFQ = JSON.parse(originalRequest);
     let offer = JSON.parse(curOffer);
@@ -69,7 +71,7 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
       requestid: requestId,
       byUserMail: originRFQ.madeByUserMail,
 
-      operatedByFF: "operatedBy",
+      operatedByFF: curOfferParsed.operatedBy,
       rateId: rateID,
 
       info: JSON.stringify(infoH),
@@ -93,6 +95,7 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
     setOpen(false);
   };
 
+  console.log("curOfferParsed -> ", JSON.stringify(curOfferParsed));
   const handleAgree = async () => {
     await appedndPendingTable();
     // setOpen(false);
@@ -120,12 +123,13 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
         aria-describedby="alert-dialog-slide-description"
       >
         <DialogTitle id="alert-dialog-slide-title">
-          Title
-          {/* {"Order id" + "requestID"} */}
+          {curOfferParsed.operatedBy}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            Hello from inside
+            <label>Terms </label>
+            <br />
+            <label>Countey </label>
           </DialogContentText>
           {MyButtons}
         </DialogContent>
@@ -137,18 +141,3 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
     return <NewOrderSuccess />;
   }
 };
-
-// const handleClickOpen = () => {
-//   setOpen(true);
-// };
-
-// {operatedBy}
-// <br />
-// {rateID}
-// <br />
-// {totalForThisRate.exw}
-// {"  "}
-// {totalForThisRate.fob}
-// {"  "}
-// {totalForThisRate.local}
-// {"  "}

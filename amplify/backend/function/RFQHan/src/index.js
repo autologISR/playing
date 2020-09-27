@@ -8,7 +8,10 @@ const docClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 
 exports.handler = async (event) => {
   let params;
-
+  console.log(
+    "shalom everybody, entered lambda for RFQ.. this is event -> ",
+    event
+  );
   let hash;
 
   if (
@@ -53,6 +56,8 @@ exports.handler = async (event) => {
     statusCode: 0,
     body: "",
   };
+
+  console.log("this is hash -> ", hash);
 
   //building query params
   //       EWX -> Using State
@@ -101,60 +106,23 @@ exports.handler = async (event) => {
   return response;
 };
 
-function updateOffers(offers) {
-  let offesHelper = {
-    id: offers.offersID + "123",
-    offersID: offers.offersID,
-    requestID: offers.requestID,
-    madeByUserMail: offers.madeByUserMail,
-    relevantOffers: offers.relevantOffers,
-  };
-  let params = {
-    TableName: "offers-3pjs4yu4wbfp7csh4v4j6x3yla-dev",
-    Item: offesHelper,
-  };
-  docClient
-    .put(params)
-    .promise()
-    .catch((e) => console.log("error ", e));
-}
-
 function getHashImport(fromRegion, fromState, terms, airOcean, containerType) {
   let hash;
 
-  if (airOcean === "Air") hash = terms + "Import" + "AIR" + "LCL";
+  if (airOcean === "Air") hash = terms + "Import" + "AIR";
   else hash = terms + "Import" + "OCEAN" + containerType;
 
   return hash;
 }
 
-function InitialFake_FCL_OCEAN_FAREAST_FOB(rfq) {
-  console.log(rfq);
-  let initialPropsFOB = {
-    requestID: rfq.requestID,
-    offersID: rfq.offersID,
-    fromRegion: rfq.fromRegion,
-    fromState: rfq.fromState,
-    fromPort: rfq.fromPort,
-    terms: "FOB",
-    airOcean: rfq.airOcean,
-    madeByUserMail: rfq.madeByUserMail,
-    containerType: "FCL",
-    details: rfq.detailsHelper,
-    shipmentDetails: rfq.shipmentDetailsHelper,
-    genralInfo: rfq.generalInfoHelper,
-  };
-  return initialPropsFOB;
-}
-
 function initial(request) {
   console.log("inside initial.. this is request -> ", request);
-  let terms = request.GeneralInfo.incoTerms;
+  let terms = request.GeneralInfo.incoterms;
   console.log("inside iniitial.. this is terms -> ", terms);
   switch (terms) {
     case "EXW":
-      let initialPropsEXW = initialEXW(request);
-      return initialPropsEXW;
+      // let initialPropsEXW = initialEXW(request);
+      // return initialPropsEXW;
       break;
 
     case "FOB":
@@ -171,11 +139,11 @@ function initialFOB(request) {
   console.log("inside initialFOB -- request -> ", request);
 
   let generalInfoHelper = request.GeneralInfo;
-  let airOceanHelper = request.GeneralInfo.airOcean;
+  let airOceanHelper = request.GeneralInfo.modeOfTransport;
   let regionHelper = request.GeneralInfo.region;
 
   console.log("generalInfoHelper -> ", generalInfoHelper);
-  console.log("airOcean -> ", airOceanHelper);
+  console.log("airOceanHelper -> ", airOceanHelper);
   console.log("regionHelper -> ", regionHelper);
 
   let locationFob;
@@ -231,7 +199,10 @@ function initialFOB(request) {
   console.log("locationFob -> ", locationFob);
   console.log("containerTypeHelper -> ", containerTypeHelper);
 
+  let offersIdHepler = request.requestID + "abc123";
+
   let initialPropsFOB = {
+    offersIdHepler: offersIdHepler,
     requestID: request.requestID,
     fromRegion: generalInfoHelper.region,
     fromState: locationFob.state,
@@ -243,45 +214,47 @@ function initialFOB(request) {
     shipmentDetails: shipmentDetailsHelper,
     genralInfo: generalInfoHelper,
   };
-  console.log("this is initialPropsFOB -> ", initialPropsFOB);
+  console.log(
+    "initial params.. returnning this  (initialPropsFOB) -> ",
+    initialPropsFOB
+  );
   return initialPropsFOB;
 }
-function initialFob_AIR() {}
 
-function initialEXW(request) {
-  let detailsHelper = JSON.parse(request.details);
-  let generalInfoHelper = detailsHelper.genralInfo;
-  let supplierDetails = detailsHelper.supplierDetails;
-  let shipmentDetailsHelper = detailsHelper.shipmentDetails;
+// function initialEXW(request) {
+//   let detailsHelper = JSON.parse(request.details);
+//   let generalInfoHelper = detailsHelper.genralInfo;
+//   let supplierDetails = detailsHelper.supplierDetails;
+//   let shipmentDetailsHelper = detailsHelper.shipmentDetails;
 
-  let containerTypeHelper = "";
+//   let containerTypeHelper = "";
 
-  // console.log("request -> ", request);
-  // console.log("detailsHelper -> ", detailsHelper);
-  // console.log("generalInfoHelper -> ", generalInfoHelper);
+//   // console.log("request -> ", request);
+//   // console.log("detailsHelper -> ", detailsHelper);
+//   // console.log("generalInfoHelper -> ", generalInfoHelper);
 
-  console.log("generalInfoHelper -> ", generalInfoHelper);
-  if (request.airOcean === "Ocean") {
-    containerTypeHelper = generalInfoHelper.shipmentType;
-  }
+//   console.log("generalInfoHelper -> ", generalInfoHelper);
+//   if (request.airOcean === "Ocean") {
+//     containerTypeHelper = generalInfoHelper.shipmentType;
+//   }
 
-  let initialPropsEXW = {
-    requestID: request.requestID,
-    offersID: request.offersID,
-    fromRegion: request.fromRegion,
-    fromState: request.fromState,
-    fromPort: "",
-    terms: "EXW",
-    airOcean: request.airOcean,
-    madeByUserMail: request.madeByUserMail,
-    containerType: containerTypeHelper,
-    details: detailsHelper,
-    shipmentDetails: shipmentDetailsHelper,
-    genralInfo: generalInfoHelper,
-  };
-  // console.log("initialPropsEXW -> ", initialPropsEXW);
-  return initialPropsEXW;
-}
+//   let initialPropsEXW = {
+//     requestID: request.requestID,
+//     offersID: request.offersID,
+//     fromRegion: request.fromRegion,
+//     fromState: request.fromState,
+//     fromPort: "",
+//     terms: "EXW",
+//     airOcean: request.airOcean,
+//     madeByUserMail: request.madeByUserMail,
+//     containerType: containerTypeHelper,
+//     details: detailsHelper,
+//     shipmentDetails: shipmentDetailsHelper,
+//     genralInfo: generalInfoHelper,
+//   };
+//   // console.log("initialPropsEXW -> ", initialPropsEXW);
+//   return initialPropsEXW;
+// }
 
 function getParamsForQueryRelevanyRates(hash, state, port) {
   let table = "IMPORTRatesSimplified-73q7nlgeevdp7fm4c6zv7mppee-dev";
@@ -292,7 +265,7 @@ function getParamsForQueryRelevanyRates(hash, state, port) {
   if (
     hash === "FOBImportOCEANLCL" ||
     hash === "FOBImportOCEANFCL" ||
-    hash === "FOBImportAIRLCL"
+    hash === "FOBImportAIR"
   ) {
     myCase = "FOB";
   }
@@ -300,7 +273,7 @@ function getParamsForQueryRelevanyRates(hash, state, port) {
   if (
     hash === "EXWImportOCEANFCL" ||
     hash === "EXWImportOCEANLCL" ||
-    hash === "EXWImportAIRLCL"
+    hash === "EXWImportAIR"
   ) {
     myCase = "EXW";
   }
@@ -358,7 +331,7 @@ function makeOffersForAppendTable(rates, params) {
   let MyrelevantOffers = makeActuallOffers(rates, params);
 
   let offersRow = {
-    offersID: params.offersID,
+    // offersID: params.offersID,
     requestID: params.requestID,
     madeByUserMail: params.madeByUserMail,
     relevantOffers: MyrelevantOffers,
@@ -369,16 +342,19 @@ function makeOffersForAppendTable(rates, params) {
 
 function makeActuallOffers(rates, params) {
   let offers = [];
-
+  console.log("hey im inside makeActuallOffers.. this is pararms ", params);
   rates.map((rate, index) => {
     //looping threw each relevant rate, getting its total
     let total = getTotalForRate(rate, params);
+
+    let offersIDHelper = params.offersIdHepler + index.toString();
 
     //creating current Offer
     let curOffer = {
       rateID: rate.rateID,
       operatedBy: rate.freightForwarderName,
       totalForThisRate: total,
+      offerUniqeId: offersIDHelper,
     };
 
     //Appending offers to return
@@ -557,9 +533,16 @@ function getRelevantQuoteForWeight(rate, WEIGHT_MASTER) {
 //Helper method ->
 // returns the different boxes from the quote
 function getBoxes(shipmentDetailsAir) {
+  console.log(
+    "222 -> inside getBoxes.. this is shipmentDetailsAir -> ",
+    shipmentDetailsAir
+  );
+
   let boxes = [];
   let shipmentDetailsLength = shipmentDetailsAir.length;
   let rowShipmentDetailsIndex;
+
+  let widthHelper, heightHelper, lengthHelper;
 
   for (
     rowShipmentDetailsIndex = 1;
@@ -570,18 +553,14 @@ function getBoxes(shipmentDetailsAir) {
     // console.log("shipmentDetailsAir[index] -> ", shipmentDetailsAir[rowShipmentDetailsIndex] )
 
     let curRow = shipmentDetailsAir[rowShipmentDetailsIndex];
-    // console.log("curRow -> ", curRow)
+    console.log("curRow -> ", curRow);
     let curBox = {};
     let curBoxesCount;
 
-    let curBoxDims = {
-      width: 0,
-      height: 0,
-      length: 0,
-    };
     let curBoxWeight_KG;
 
     curRow.forEach((element) => {
+      console.log("this is element -> ", element);
       switch (element.field) {
         case "unitWeight":
           curBoxWeight_KG = element.value;
@@ -592,35 +571,38 @@ function getBoxes(shipmentDetailsAir) {
           break;
 
         case "unitWidth":
-          curBoxDims.width = element.value;
+          widthHelper = element.value;
           break;
 
         case "unitHeight":
-          curBoxDims.height = element.value;
+          heightHelper = element.value;
           break;
 
         case "unitLength":
-          curBoxDims.length = element.value;
+          lengthHelper = element.value;
           break;
 
         default:
-          // console.log("element.field .. default-> ", element.field)
+          console.log("element.field .. default-> ", element.field);
           break;
       }
-
-      if (curBoxesCount > 0) {
-        curBox = {
-          curBoxWeight_KG: curBoxWeight_KG,
-          curBoxesCount: curBoxesCount,
-          curBoxDims: curBoxDims,
-        };
-        console.log("addid curBoxWeight_KG ->", curBox.curBoxWeight_KG);
-        console.log("addid curBoxesCount ->", curBox.curBoxesCount);
-        console.log("addid curBoxDims ->", curBox.curBoxDims);
-        boxes.push(curBox);
-      }
-      curBoxesCount = 0;
     });
+    if (curBoxesCount > 0) {
+      let curBox = {
+        curBoxWeight_KG: curBoxWeight_KG,
+        curBoxesCount: curBoxesCount,
+        curBoxDims: {
+          width: widthHelper,
+          length: lengthHelper,
+          height: heightHelper,
+        },
+      };
+      console.log("addid curBoxWeight_KG ->", curBox.curBoxWeight_KG);
+      console.log("addid curBoxesCount ->", curBox.curBoxesCount);
+      console.log("addid curBoxDims ->", curBox.curBoxDims);
+      boxes.push(curBox);
+    }
+    curBoxesCount = 0;
   }
   console.log("inside getBoxes... returning boxes -> ", boxes);
   return boxes;
@@ -628,4 +610,41 @@ function getBoxes(shipmentDetailsAir) {
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
+}
+
+// function updateOffers(offers) {
+//   let offesHelper = {
+//     id: offers.offersID + "123",
+//     offersID: offers.offersID,
+//     requestID: offers.requestID,
+//     madeByUserMail: offers.madeByUserMail,
+//     relevantOffers: offers.relevantOffers,
+//   };
+//   let params = {
+//     TableName: "offers-3pjs4yu4wbfp7csh4v4j6x3yla-dev",
+//     Item: offesHelper,
+//   };
+//   docClient
+//     .put(params)
+//     .promise()
+//     .catch((e) => console.log("error ", e));
+// }
+
+function InitialFake_FCL_OCEAN_FAREAST_FOB(rfq) {
+  console.log(rfq);
+  let initialPropsFOB = {
+    requestID: rfq.requestID,
+    offersID: rfq.offersID,
+    fromRegion: rfq.fromRegion,
+    fromState: rfq.fromState,
+    fromPort: rfq.fromPort,
+    terms: "FOB",
+    airOcean: rfq.airOcean,
+    madeByUserMail: rfq.madeByUserMail,
+    containerType: "FCL",
+    details: rfq.detailsHelper,
+    shipmentDetails: rfq.shipmentDetailsHelper,
+    genralInfo: rfq.generalInfoHelper,
+  };
+  return initialPropsFOB;
 }

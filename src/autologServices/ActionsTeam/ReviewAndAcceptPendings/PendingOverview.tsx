@@ -1,8 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { PendingDialog } from "./PendingHandler";
-
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardActionArea from "@material-ui/core/CardActionArea";
+import CardActions from "@material-ui/core/CardActions";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 //PendingOverview is same level as Offers Page
-
+const useStyles = makeStyles({
+  root: {
+    maxWidth: 345,
+  },
+  media: {
+    height: 140,
+  },
+});
 interface PendingHandlerType {
   id: string;
   requestid: string;
@@ -25,6 +39,7 @@ export const PendingOverview: React.FC<allPendingsType> = (
   const [highLight, setHighLight] = useState(-1);
   const [loading, setLoading] = useState(true);
   const [pendingsOverviewFixed, setPendingsOverviewFixed] = useState();
+  const classes = useStyles();
 
   function initial() {
     if (allPendings.allPendings) {
@@ -32,10 +47,41 @@ export const PendingOverview: React.FC<allPendingsType> = (
         (Pending: any, index: number) => {
           return (
             <div>
-              {Pending.byUserMail}
-              <button onClick={() => setHighLight(index)}>
-                Click To overview
-              </button>
+              <Card className={classes.root}>
+                <CardActionArea>
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      Title
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      component="p"
+                    >
+                      Info about RFQ
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={() => setHighLight(index)}
+                  >
+                    View
+                  </Button>
+                  {/* <Button size="small" color="primary">
+          Learn More
+        </Button> */}
+                </CardActions>
+                {/* <div>
+                {Pending.byUserMail}
+                <button onClick={() => setHighLight(index)}>
+                  Click To overview
+                </button>
+              </div> */}
+              </Card>
+              <br />
             </div>
           );
         }

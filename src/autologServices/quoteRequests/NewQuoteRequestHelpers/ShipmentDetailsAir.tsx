@@ -35,7 +35,6 @@ const airShipmentDetailstColumns = [
     head: true,
   },
 ];
-// const minWeight = {field: "minimumWeight", value: "Min Weight", readonly: true, head: true, fieldType: 'kg'};
 
 export const airColumns = [[rowIndexField, ...airShipmentDetailstColumns]];
 export const shipmentDetailsAirForm = [

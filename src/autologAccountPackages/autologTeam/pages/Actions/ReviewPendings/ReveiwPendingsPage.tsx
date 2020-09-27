@@ -37,6 +37,7 @@ export const ReveiwPendings: React.FC = () => {
   if (allPendings.length > 0) {
     return (
       <div>
+        <h3>All Pendings requests</h3>
         <PendingOverview allPendings={allPendings} />
       </div>
     );
@@ -44,4 +45,3 @@ export const ReveiwPendings: React.FC = () => {
     return <div>Loading Pendings to Review team..</div>;
   }
 };
-

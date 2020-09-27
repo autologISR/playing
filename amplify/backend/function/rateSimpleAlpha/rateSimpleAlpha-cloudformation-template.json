@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/rateSimpleAlpha-563337496e3961745a73-build.zip"
+          "S3Key": "amplify-builds/rateSimpleAlpha-395a312f2b723045545a-build.zip"
         }
       }
     },
