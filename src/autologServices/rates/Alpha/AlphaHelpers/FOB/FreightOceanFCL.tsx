@@ -220,6 +220,19 @@ const oceanFclRateColumns = [[rowIndexField, ...oceanFclColumns]];
 
 export const OceanFclRates = [
   {
+    name: "portDefaultDestinationIsrael",
+    label: "Destination Port Israel",
+    editor: "dropdown",
+    options: ["Ashdod", "Haifa", "Ignore"],
+    required: true,
+  },
+  {
+    name: "trainTransIsraelAmount",
+    label: "Train travel to other port",
+    editor: "number",
+    required: true,
+  },
+  {
     name: "oceanFCLTable",
     label: "Ocean FCL Rates:",
     editor: "spreadsheet",

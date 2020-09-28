@@ -45,12 +45,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "RFQHan",
+            "rateSimpleAirFob",
             {
               "Fn::Join": [
                 "",
                 [
-                  "RFQHan",
+                  "rateSimpleAirFob",
                   "-",
                   {
                     "Ref": "env"
@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/RFQHan-4b747344494b4a4f7377-build.zip"
+          "S3Key": "amplify-builds/rateSimpleAirFob-6b35643465552f524d61-build.zip"
         }
       }
     },
@@ -100,12 +100,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "alphakotelLambdaRoledbfda808",
+            "alphakotelLambdaRole4603572e",
             {
               "Fn::Join": [
                 "",
                 [
-                  "alphakotelLambdaRoledbfda808",
+                  "alphakotelLambdaRole4603572e",
                   "-",
                   {
                     "Ref": "env"

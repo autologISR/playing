@@ -225,6 +225,7 @@ type IMPORTRatesSimplified
   portTo: String!
   limits: String
 
+  # airRate = [weightsArray,actualRates]
   airRate: String
   lcl: String
   dv20: String

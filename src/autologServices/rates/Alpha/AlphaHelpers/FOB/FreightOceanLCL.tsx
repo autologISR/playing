@@ -2,7 +2,6 @@ import { IFormProps, IValues } from "../../../../../common/form/formTypes";
 import { ratesCreationMessages } from "../RatesCreationMsg";
 
 import { rowIndexField } from "../common";
-
 export const oceanFreightPartColumns = [
   { field: "portFrom", value: "Port From", readOnly: true, head: true },
   { field: "portTo", value: "Port To", readOnyly: true, head: true },
@@ -15,9 +14,9 @@ export const oceanFreightPartColumns = [
   },
 ];
 
-const remarksField = {
-  field: "remarks",
-  value: "Remarks",
+const Route = {
+  field: "route",
+  value: "route",
   readOnly: true,
   head: true,
 };
@@ -43,11 +42,24 @@ export const FreightOceanLCLColumns = [
     ...oceanFreightPartColumns,
     lclFieldWeight,
     lclFieldCurrency,
-    remarksField,
+    Route,
   ],
 ];
 
 export const OceanLclRates = [
+  {
+    name: "portDefaultDestinationIsrael",
+    label: "Destination Port Israel",
+    editor: "dropdown",
+    options: ["Ashdod", "Haifa", "Ignore"],
+    required: true,
+  },
+  {
+    name: "trainTransIsraelAmount",
+    label: "Train travel to other port",
+    editor: "number",
+    required: true,
+  },
   {
     name: "oceanLCLTable",
     label: "Ocean LCL Rates",

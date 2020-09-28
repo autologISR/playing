@@ -45,12 +45,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "rateSimpleAlpha",
+            "rateSimpleOceanFCLFob",
             {
               "Fn::Join": [
                 "",
                 [
-                  "rateSimpleAlpha",
+                  "rateSimpleOceanFCLFob",
                   "-",
                   {
                     "Ref": "env"
@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/rateSimpleAlpha-395a312f2b723045545a-build.zip"
+          "S3Key": "amplify-builds/rateSimpleOceanFCLFob-7067565a6d7339374d6f-build.zip"
         }
       }
     },
@@ -100,12 +100,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "alphakotelLambdaRole93322f14",
+            "alphakotelLambdaRolef134638e",
             {
               "Fn::Join": [
                 "",
                 [
-                  "alphakotelLambdaRole93322f14",
+                  "alphakotelLambdaRolef134638e",
                   "-",
                   {
                     "Ref": "env"
@@ -227,62 +227,6 @@
             }
           ]
         }
-      }
-    },
-    "LambdaTriggerPolicyRateSubmission": {
-      "DependsOn": [
-        "LambdaExecutionRole"
-      ],
-      "Type": "AWS::IAM::Policy",
-      "Properties": {
-        "PolicyName": "amplify-lambda-execution-policy-RateSubmission",
-        "Roles": [
-          {
-            "Ref": "LambdaExecutionRole"
-          }
-        ],
-        "PolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Action": [
-                "dynamodb:DescribeStream",
-                "dynamodb:GetRecords",
-                "dynamodb:GetShardIterator",
-                "dynamodb:ListStreams"
-              ],
-              "Resource": {
-                "Fn::ImportValue": {
-                  "Fn::Sub": "${apialphakotelGraphQLAPIIdOutput}:GetAtt:RateSubmissionTable:StreamArn"
-                }
-              }
-            }
-          ]
-        }
-      }
-    },
-    "LambdaEventSourceMappingRateSubmission": {
-      "Type": "AWS::Lambda::EventSourceMapping",
-      "DependsOn": [
-        "LambdaTriggerPolicyRateSubmission",
-        "LambdaExecutionRole"
-      ],
-      "Properties": {
-        "BatchSize": 100,
-        "Enabled": true,
-        "EventSourceArn": {
-          "Fn::ImportValue": {
-            "Fn::Sub": "${apialphakotelGraphQLAPIIdOutput}:GetAtt:RateSubmissionTable:StreamArn"
-          }
-        },
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "LambdaFunction",
-            "Arn"
-          ]
-        },
-        "StartingPosition": "LATEST"
       }
     }
   },
