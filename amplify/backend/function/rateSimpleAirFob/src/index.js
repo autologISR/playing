@@ -100,6 +100,7 @@ function putItemInSimplifiedTabel_AIR(curRow) {
 }
 
 function getRowToUpdate_FOB_AIR(row, FobRateFixed, idHelperIndex) {
+  console.log("222 -> ", FobRateFixed.airTable);
   let portFrom = "";
   let portTo = "";
   let tt = 0;
@@ -144,10 +145,11 @@ function getRowToUpdate_FOB_AIR(row, FobRateFixed, idHelperIndex) {
     } // end of switch
   });
 
-  // airRateHelper = [weightsArray,actualRates]
+  // airRateHelper = [weightsArray, actualRates, currency]
   let airRateHelper = new Array(2);
   airRateHelper[0] = weightsArray;
   airRateHelper[1] = actualRates;
+  airRateHelper[2] = FobRateFixed.airTableCurrency;
 
   let idHelper = FobRateFixed.rateID.concat(idHelperIndex);
 
@@ -199,6 +201,7 @@ function initialParams(curRate) {
     rateID: rateID,
     GeneralInfo: GeneralInfo,
     airTable: airTable,
+    airTableCurrency: curRate.FreightTransportAIR.CURRENCY_HELPER,
     limits: limits,
     locals: locals,
   };

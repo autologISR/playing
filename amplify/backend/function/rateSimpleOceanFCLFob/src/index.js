@@ -9,6 +9,7 @@ var AWS = require("aws-sdk");
 AWS.config.update({ region: "eu-west-1" });
 const docClient = new AWS.DynamoDB.DocumentClient({ region: "eu-west-1" });
 exports.handler = async (event) => {
+  console.log("1 -> ", event)
   if (event.httpMethod === "POST" && event.body.length > 0) {
     let curRate = JSON.parse(event.body).submmisionHelper;
     console.log("this is curRate -> ", curRate);
