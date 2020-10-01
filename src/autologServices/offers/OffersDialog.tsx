@@ -54,9 +54,9 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
 }: offerTypeDialog) => {
   const [open, setOpen] = React.useState(true);
   const [submitted, setSubmitted] = React.useState(false);
-  const [curOfferParsed, setCurOfferParsed] = React.useState(
-    JSON.parse(curOffer)
-  );
+  const curOfferParsed = JSON.parse(curOffer);
+  const originalRequestParsed = JSON.parse(originalRequest);
+
   async function appedndPendingTable() {
     let originRFQ = JSON.parse(originalRequest);
     let offer = JSON.parse(curOffer);
@@ -95,7 +95,8 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
     setOpen(false);
   };
 
-  console.log("curOfferParsed -> ", JSON.stringify(curOfferParsed));
+  console.log("curOfferParsed -> ", curOfferParsed);
+  console.log("originalRequest -> ", originalRequestParsed);
   const handleAgree = async () => {
     await appedndPendingTable();
     // setOpen(false);
@@ -111,30 +112,34 @@ export const OffersDialog: FunctionComponent<offerTypeDialog> = ({
       </Button>
     </DialogActions>
   );
+  let MyDialog = (
+    <Dialog
+      fullWidth
+      open={open}
+      TransitionComponent={Transition}
+      keepMounted
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-slide-title"
+      aria-describedby="alert-dialog-slide-description"
+    >
+      <DialogTitle id="alert-dialog-slide-title">
+        Operated by {curOfferParsed.operatedBy}
+        <br />
+        carrier {curOfferParsed.carrier}
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-slide-description">
+          <label>Offer for rate terms {originalRequestParsed.incoterms}</label>
+          <br />
+          <label>From {originalRequestParsed.fromState}</label>
+          <br />
+          {/* <label>Fob rate  {curOfferParsed.totalForThisRate.fobPart</label> */}
+        </DialogContentText>
+        {MyButtons}
+      </DialogContent>
+    </Dialog>
+  );
   if (!submitted) {
-    let MyDialog = (
-      <Dialog
-        fullWidth
-        open={open}
-        TransitionComponent={Transition}
-        keepMounted
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-slide-title"
-        aria-describedby="alert-dialog-slide-description"
-      >
-        <DialogTitle id="alert-dialog-slide-title">
-          {curOfferParsed.operatedBy}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            <label>Terms </label>
-            <br />
-            <label>Countey </label>
-          </DialogContentText>
-          {MyButtons}
-        </DialogContent>
-      </Dialog>
-    );
     return <div> {MyDialog}</div>;
   } else {
     //means submited is true

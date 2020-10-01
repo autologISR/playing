@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/rateSimpleOceanFCLFob-7067565a6d7339374d6f-build.zip"
+          "S3Key": "amplify-builds/rateSimpleOceanFCLFob-79797666775872573036-build.zip"
         }
       }
     },

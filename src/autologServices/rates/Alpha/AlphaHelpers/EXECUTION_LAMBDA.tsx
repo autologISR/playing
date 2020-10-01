@@ -5,12 +5,13 @@ import axios from "axios";
 let createdAt = new Date().toISOString();
 
 const LambdaFobOceanLCL =
-  " https://1ck4qsbez0.execute-api.eu-west-1.amazonaws.com/default/rateSimpleOceanLCLFob-dev";
-const LambdaFobAirURL =
-  "https://7fmcjzpbz5.execute-api.eu-west-1.amazonaws.com/default/rateSimpleAirFob-dev";
+  "https://1ck4qsbez0.execute-api.eu-west-1.amazonaws.com/default/rateSimpleOceanLCLFob-dev";
+
+  const LambdaFobAirURL =
+  "https://1ck4qsbez0.execute-api.eu-west-1.amazonaws.com/default/rateSimpleAirFob-dev";
 
 const LambdaForOceanFCL =
-  "https://0q9k8y7xxl.execute-api.eu-west-1.amazonaws.com/default/rateSimpleOceanFCLFob-dev";
+  "https://uaejrd2nlj.execute-api.eu-west-1.amazonaws.com/default/rateSimpleOceanFCLFob-dev";
 
 export async function simple_AIR_FobRate(submissionData: IValues) {
   console.log("entered simple_AIR_FobRate");

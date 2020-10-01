@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/RFQHan-4b747344494b4a4f7377-build.zip"
+          "S3Key": "amplify-builds/RFQHan-32386d4677644a773459-build.zip"
         }
       }
     },

@@ -134,7 +134,8 @@ type FFClients @model {
   closedShipments: String
 }
 
-type CompanyUsersInSystem @model {
+type CompanyUsersInSystem @model 
+@key(name: "getUserByMail", fields: ["mainUserMail"], queryField: "getUserByMail"){
   id: ID!
   companyType: CompanyUsersTypes!
 

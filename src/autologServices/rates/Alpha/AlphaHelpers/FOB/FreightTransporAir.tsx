@@ -38,7 +38,16 @@ export const airColumns = [
   [rowIndexField, ...airFreightPartColumns, route, minWeight],
 ];
 
+
 export const airRates = [
+  {
+    name: "CURRENCY_HELPER",
+    label: "Currency MASTER for Freight table, (Ignore table currency)",
+    editor: "dropdown",
+    options: ["USD","NIS","EUR"],
+    required: true,
+  },
+
   {
     name: "airTable",
     label: "Air Rates:",

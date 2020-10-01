@@ -9,6 +9,18 @@
     },
     "env": {
       "Type": "String"
+    },
+    "apialphakotelGraphQLAPIIdOutput": {
+      "Type": "String",
+      "Default": "apialphakotelGraphQLAPIIdOutput"
+    },
+    "apialphakotelGraphQLAPIEndpointOutput": {
+      "Type": "String",
+      "Default": "apialphakotelGraphQLAPIEndpointOutput"
+    },
+    "apialphakotelGraphQLAPIKeyOutput": {
+      "Type": "String",
+      "Default": "apialphakotelGraphQLAPIKeyOutput"
     }
   },
   "Conditions": {
@@ -33,12 +45,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "rateSimpleOceanLCLFob",
+            "RFQFobAir",
             {
               "Fn::Join": [
                 "",
                 [
-                  "rateSimpleOceanLCLFob",
+                  "RFQFobAir",
                   "-",
                   {
                     "Ref": "env"
@@ -55,6 +67,15 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "API_ALPHAKOTEL_GRAPHQLAPIIDOUTPUT": {
+              "Ref": "apialphakotelGraphQLAPIIdOutput"
+            },
+            "API_ALPHAKOTEL_GRAPHQLAPIENDPOINTOUTPUT": {
+              "Ref": "apialphakotelGraphQLAPIEndpointOutput"
+            },
+            "API_ALPHAKOTEL_GRAPHQLAPIKEYOUTPUT": {
+              "Ref": "apialphakotelGraphQLAPIKeyOutput"
             }
           }
         },
@@ -69,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/rateSimpleOceanLCLFob-326d2f634e46506b6a52-build.zip"
+          "S3Key": "amplify-builds/RFQFobAir-3630374c467434363168-build.zip"
         }
       }
     },
@@ -79,12 +100,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "alphakotelLambdaRole0ee8cabc",
+            "alphakotelLambdaRole80f2359a",
             {
               "Fn::Join": [
                 "",
                 [
-                  "alphakotelLambdaRole0ee8cabc",
+                  "alphakotelLambdaRole80f2359a",
                   "-",
                   {
                     "Ref": "env"
@@ -150,6 +171,59 @@
                   }
                 ]
               }
+            }
+          ]
+        }
+      }
+    },
+    "AmplifyResourcesPolicy": {
+      "DependsOn": [
+        "LambdaExecutionRole"
+      ],
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "amplify-lambda-execution-policy",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "appsync:Create*",
+                "appsync:StartSchemaCreation",
+                "appsync:GraphQL",
+                "appsync:Get*",
+                "appsync:List*",
+                "appsync:Update*",
+                "appsync:Delete*"
+              ],
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:aws:appsync:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":apis/",
+                      {
+                        "Ref": "apialphakotelGraphQLAPIIdOutput"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ]
         }

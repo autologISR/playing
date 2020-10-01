@@ -90,7 +90,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-alphakotel-dev-160743-deployment",
-          "S3Key": "amplify-builds/rateSimpleAirFob-6b35643465552f524d61-build.zip"
+          "S3Key": "amplify-builds/rateSimpleAirFob-41552b5a2b3545563165-build.zip"
         }
       }
     },

@@ -6,8 +6,8 @@ import { createStyles, Divider, Theme } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import * as queries from "../../../graphql/queries";
 import { API, graphqlOperation } from "aws-amplify";
-
-// import { GraphQLResult } from "@aws-amplify/api";
+import axios from "axios";
+import { GraphQLResult } from "@aws-amplify/api";
 // import { uuid } from "uuidv4";
 // import { getMaxListeners, off } from "process";
 // import { string } from "prop-types";
@@ -55,6 +55,8 @@ interface offerType {
   operatedBy: string;
   rateID: string;
   totalForThisRate: any;
+  carrier: string;
+  originalRequest: any;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,6 +82,8 @@ let initialOffers: offerType = {
   operatedBy: "",
   rateID: "",
   totalForThisRate: "",
+  carrier: "",
+  originalRequest: {},
 };
 
 //return the Object from AllRequests by id
@@ -98,6 +102,8 @@ export const Offers: FunctionComponent = () => {
 
   const [requestId, setRequestId] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const [offersSummedUpToUSD, setOffersSummedUpToUSD] = useState();
 
   const [originalRequest, setOriginalRequest] = useState<getAllRequests>(
     initialRequest
@@ -139,20 +145,22 @@ export const Offers: FunctionComponent = () => {
 
   //after fetching data and setting Offers and Requests State,
   //we set loading to off and showing offersHandler
-  if (offers && originalRequest !== initialRequest) {
+  if (offers && originalRequest !== initialRequest && offers.length > 0) {
     if (offers[0] !== initialOffers) {
       if (loading) {
         console.log("offers -> ", offers);
         console.log("originalRequest  ->  ", originalRequest);
-
-        //only now setting loading to false
         setLoading(false);
       }
     }
   }
 
+  // const [nisToUsd, setNisToUsd] = useState(-1);
+  // const [eurToUsd, setEurToUsd] = useState(-1);
+
   const classes = useStyles();
 
+  // loading is set to false ONLY after goSumOffers
   if (loading) {
     return (
       <>

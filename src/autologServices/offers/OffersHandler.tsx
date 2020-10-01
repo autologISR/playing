@@ -8,6 +8,11 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
+import axios from "axios";
+
+const exchangeUrl_EUR = "https://api.exchangeratesapi.io/latest?base=EUR";
+const exchangeUrl_ILS = "https://api.exchangeratesapi.io/latest?base=ILS";
+
 const useStyles = makeStyles({
   root: {
     maxWidth: 345,
@@ -29,6 +34,8 @@ interface offerTypeFromAbove {
   operatedBy: string;
   rateID: string;
   totalForThisRate: any;
+  carrier: string;
+  originalRequest: any;
 }
 
 //this compeonent recives single offer and present it
@@ -42,6 +49,9 @@ export const OffersHandler: FunctionComponent<offerTypeHandler> = ({
   offer,
 }: offerTypeHandler) => {
   const [valueTotalUSD, setValueTotalUSD] = React.useState(0);
+  const [eurToUSD, setEurToUSD] = React.useState(0);
+  const [nisToUSD, setNisToUSD] = React.useState(0);
+
   // function handelClickView() {
   //   setHighlight(index);
   // }
@@ -51,14 +61,19 @@ export const OffersHandler: FunctionComponent<offerTypeHandler> = ({
   // let totalHelperExw = offer.totalForThisRate.local.usd
 
   React.useEffect(() => {
-    let totalHelperFob = offer.totalForThisRate.fob.usd;
-
-    setValueTotalUSD(totalHelperFob);
+    // setEurToUSD(offer.originalRequest.exchanges.eurToUSD);
+    // setNisToUSD(offer.originalRequest.exchanges.nisToUSD);
   }, []);
 
   function HanldeClinkViewOffer(index: number) {
     setHighlight(index);
   }
+
+  const localsInUSD =
+    offer.totalForThisRate.localPart.fixPart.totalMandatory.eur * eurToUSD +
+    offer.totalForThisRate.localPart.fixPart.totalMandatory.nis * nisToUSD +
+    offer.totalForThisRate.localPart.fixPart.totalMandatory.usd;
+  // console.log(eurToUSD, "  ", nisToUSD);
   return (
     <Card className={classes.root}>
       <CardActionArea>
@@ -73,7 +88,10 @@ export const OffersHandler: FunctionComponent<offerTypeHandler> = ({
             {offer.operatedBy}
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
-            Info about FF
+            {Math.ceil(
+              localsInUSD + offer.totalForThisRate.fobPart.totalFreightPartUSD
+            )}
+            $
           </Typography>
         </CardContent>
       </CardActionArea>
